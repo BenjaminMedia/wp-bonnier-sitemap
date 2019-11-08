@@ -1,0 +1,35 @@
+{
+  "name": "bonnier/wp-bonnier-sitemap",
+  "description": "A Sitemap plugin for the Willow platform",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Bonnier Publications",
+      "email": "interactive@bonnier.dk",
+      "homepage": "http://bonnierpublications.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "illuminate/support": "5.7.*"
+  },
+  "require-dev": {
+    "johnpbloch/wordpress": "^4.9",
+    "lucatume/wp-browser": "2.1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bonnier\\WP\\Sitemap\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Bonnier\\WP\\Sitemap\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "unit": "vendor/bin/codecept run unit",
+    "integration": "vendor/bin/codecept run integration",
+    "run-tests": "composer unit; composer integration"
+  }
+}
