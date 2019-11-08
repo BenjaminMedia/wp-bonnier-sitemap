@@ -1,8 +1,9 @@
 <?php
 
-namespace Bonnier\WP\Sitemap\Observers;
+namespace Bonnier\WP\Sitemap\Observers\Subjects;
 
 use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
+use Bonnier\WP\Sitemap\Observers\AbstractSubject;
 
 class CategorySubject extends AbstractSubject
 {

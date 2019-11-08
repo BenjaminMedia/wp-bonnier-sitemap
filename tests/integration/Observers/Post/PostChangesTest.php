@@ -44,7 +44,7 @@ class PostChangesTest extends ObserverTestCase
 
     public function testSitemapEntryNotCreatedForDrafts()
     {
-        $post = $this->getPost([
+        $this->getPost([
             'post_status' => 'draft'
         ]);
         $sitemaps = $this->sitemapRepository->all();

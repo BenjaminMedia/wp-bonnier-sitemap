@@ -2,13 +2,15 @@
 
 namespace Bonnier\WP\Sitemap;
 
-use Bonnier\WP\Repositories\SitemapRepository;
+use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Commands\Commands;
 use Bonnier\WP\Sitemap\Database\DB;
 use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
 
 class WpBonnierSitemap
 {
+    const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
+
     private static $instance;
 
     private $dir;

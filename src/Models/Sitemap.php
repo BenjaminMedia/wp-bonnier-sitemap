@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Bonnier\WP\Sitemap\Models;
 
-
-use Bonnier\WP\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
+use WP_CLI\Fetchers\Site;
 
 class Sitemap implements Arrayable
 {
@@ -50,6 +48,28 @@ class Sitemap implements Arrayable
         return $sitemap;
     }
 
+    public static function createFromCategory(\WP_Term $category): Sitemap
+    {
+        $sitemap = new Sitemap();
+        $sitemap->setUrl(get_category_link($category))
+            ->setLocale(LocaleHelper::getTermLocale($category->term_id))
+            ->setPostType($category->taxonomy)
+            ->setWpID($category->term_id)
+            ->setModifiedAt(new \DateTime());
+        return $sitemap;
+    }
+
+    public static function createFromTag(\WP_Term $tag): Sitemap
+    {
+        $sitemap = new Sitemap();
+        $sitemap->setUrl(get_tag_link($tag))
+            ->setLocale(LocaleHelper::getTermLocale($tag->term_id))
+            ->setPostType($tag->taxonomy)
+            ->setWpID($tag->term_id)
+            ->setModifiedAt(new \DateTime());
+        return $sitemap;
+    }
+
     /**
      * @return int
      */
@@ -60,6 +80,7 @@ class Sitemap implements Arrayable
 
     /**
      * @param int $sitemapID
+     * @return Sitemap
      */
     public function setID(int $sitemapID): Sitemap
     {

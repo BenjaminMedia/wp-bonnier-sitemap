@@ -1,11 +1,11 @@
 <?php
 
-namespace Bonnier\WP\Sitemap\Observers\Sitemaps;
+namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
+use Bonnier\WP\Sitemap\Observers\Subjects\PostSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
-use Bonnier\WP\Sitemap\Observers\PostSubject;
 
 class PostChangeObserver implements ObserverInterface
 {
@@ -24,7 +24,7 @@ class PostChangeObserver implements ObserverInterface
     {
         if ($post = $subject->getPost()) {
             if ($post->post_status === 'publish') {
-                $this->sitemapRepository->insertOrUpdateByPost($subject->getPost());
+                $this->sitemapRepository->insertOrUpdatePost($subject->getPost());
             } else {
                 $this->sitemapRepository->deleteByPost($post);
             }

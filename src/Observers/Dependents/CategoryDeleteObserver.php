@@ -1,13 +1,13 @@
 <?php
 
-namespace Bonnier\WP\Sitemap\Observers\Sitemaps;
+namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
+use Bonnier\WP\Sitemap\Observers\Subjects\CategorySubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
-use Bonnier\WP\Sitemap\Observers\TagSubject;
 
-class TagSlugChangeObserver implements ObserverInterface
+class CategoryDeleteObserver implements ObserverInterface
 {
     private $sitemapRepository;
 
@@ -17,13 +17,17 @@ class TagSlugChangeObserver implements ObserverInterface
     }
 
     /**
-     * @param SubjectInterface|TagSubject $subject
+     * @param SubjectInterface|CategorySubject $subject
      * @throws \Exception
      */
     public function update(SubjectInterface $subject)
     {
-        if ($subject->getType() === TagSubject::UPDATE && $tag = $subject->getTag()) {
-
+        if ($subject->getType() !== CategorySubject::DELETE) {
+            return;
+        }
+        $category = $subject->getCategory();
+        if (!$category) {
+            return;
         }
     }
 }

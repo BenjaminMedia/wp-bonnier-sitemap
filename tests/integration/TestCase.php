@@ -50,4 +50,20 @@ class TestCase extends WPTestCase
         $this->assertEquals($post->post_type, $sitemap->getPostType());
         $this->assertEquals(LocaleHelper::getPostLocale($post->ID), $sitemap->getLocale());
     }
+
+    protected function assertSitemapEntryMatchesCategory(Sitemap $sitemap, \WP_Term $category)
+    {
+        $this->assertEquals($category->term_id, $sitemap->getWpID());
+        $this->assertEquals(get_category_link($category), $sitemap->getUrl());
+        $this->assertEquals($category->taxonomy, $sitemap->getPostType());
+        $this->assertEquals(LocaleHelper::getTermLocale($category->term_id), $sitemap->getLocale());
+    }
+
+    protected function assertSitemapEntryMatchesTag(Sitemap $sitemap, \WP_Term $tag)
+    {
+        $this->assertEquals($tag->term_id, $sitemap->getWpID());
+        $this->assertEquals(get_tag_link($tag), $sitemap->getUrl());
+        $this->assertEquals($tag->taxonomy, $sitemap->getPostType());
+        $this->assertEquals(LocaleHelper::getTermLocale($tag->term_id), $sitemap->getLocale());
+    }
 }

@@ -2,11 +2,14 @@
 
 namespace Bonnier\WP\Sitemap\Observers;
 
-use Bonnier\WP\Sitemap\Observers\Sitemaps\CategoryDeleteObserver;
-use Bonnier\WP\Sitemap\Observers\Sitemaps\CategorySlugChangeObserver;
-use Bonnier\WP\Sitemap\Observers\Sitemaps\PostChangeObserver;
-use Bonnier\WP\Sitemap\Observers\Sitemaps\TagDeleteObserver;
-use Bonnier\WP\Sitemap\Observers\Sitemaps\TagSlugChangeObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\CategoryDeleteObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\CategorySlugChangeObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\PostChangeObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\TagDeleteObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\TagSlugChangeObserver;
+use Bonnier\WP\Sitemap\Observers\Subjects\CategorySubject;
+use Bonnier\WP\Sitemap\Observers\Subjects\PostSubject;
+use Bonnier\WP\Sitemap\Observers\Subjects\TagSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 
 class Observers

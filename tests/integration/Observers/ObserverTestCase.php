@@ -2,9 +2,9 @@
 
 namespace Bonnier\WP\Sitemap\Tests\integration\Observers;
 
+use Bonnier\WP\Sitemap\Observers\Observers;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Database\DB;
-use Bonnier\WP\Sitemap\Observers\Observers;
 use Bonnier\WP\Sitemap\Tests\integration\TestCase;
 
 class ObserverTestCase extends TestCase

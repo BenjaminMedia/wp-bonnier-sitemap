@@ -73,19 +73,41 @@ class SitemapRepository
 
     public function findByPost(\WP_Post $post): ?Sitemap
     {
-        $query = $this->database->query()->select('*')
-            ->where(['wp_id', $post->ID], Query::FORMAT_INT)
-            ->andWhere(['post_type', $post->post_type])
-            ->limit(1);
-        if ($sitemaps = $this->database->getResults($query)) {
-            if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
-                return Sitemap::createFromArray($sitemap);
+        try {
+            $query = $this->database->query()->select('*')
+                ->where(['wp_id', $post->ID], Query::FORMAT_INT)
+                ->andWhere(['post_type', $post->post_type])
+                ->limit(1);
+            if ($sitemaps = $this->database->getResults($query)) {
+                if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                    return Sitemap::createFromArray($sitemap);
+                }
             }
-        }
+        } catch (Exception $exception) {}
         return null;
     }
 
-    public function insertOrUpdateByPost(?\WP_Post $post): ?Sitemap
+    /**
+     * @param \WP_Term $term
+     * @return Sitemap|null
+     */
+    public function findByTerm(\WP_Term $term): ?Sitemap
+    {
+        try {
+        $query = $this->database->query()->select('*')
+            ->where(['wp_id', $term->term_id], Query::FORMAT_INT)
+            ->andWhere(['post_type', $term->taxonomy])
+            ->limit(1);
+            if ($sitemaps = $this->database->getResults($query)) {
+                if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                    return Sitemap::createFromArray($sitemap);
+                }
+            }
+        } catch (Exception $exception) {}
+        return null;
+    }
+
+    public function insertOrUpdatePost(?\WP_Post $post): ?Sitemap
     {
         if ($post) {
             $sitemap = $this->findByPost($post);
@@ -101,6 +123,33 @@ class SitemapRepository
             } else {
                 try {
                     $sitemap = Sitemap::createFromPost($post);
+                    $sitemapID = $this->database->insert($sitemap->toArray());
+                    return $sitemap->setID($sitemapID);
+                } catch (Exception $exception) {
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function insertOrUpdateCategory(?\WP_Term $category): ?Sitemap
+    {
+        if ($category) {
+            $sitemap = $this->findByTerm($category);
+            if ($sitemap) {
+                $sitemap->setUrl(get_category_link($category));
+                try {
+                    if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
+                        return $sitemap;
+                    }
+                } catch (Exception $exception) {
+                    return null;
+                }
+            } else {
+                try {
+                    $sitemap = Sitemap::createFromCategory($category);
                     $sitemapID = $this->database->insert($sitemap->toArray());
                     return $sitemap->setID($sitemapID);
                 } catch (Exception $exception) {
