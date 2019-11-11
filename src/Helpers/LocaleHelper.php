@@ -54,7 +54,7 @@ class LocaleHelper
     {
         if (function_exists('pll_languages_list')) {
             return pll_languages_list();
-        } elseif(self::$languageList) {
+        } elseif (self::$languageList) {
             return self::$languageList;
         }
 
@@ -90,7 +90,8 @@ class LocaleHelper
      *
      * @param array $languageList
      */
-    public static function setLanguageList(array $languageList) {
+    public static function setLanguageList(array $languageList)
+    {
         self::$languageList = $languageList;
     }
 

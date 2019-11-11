@@ -7,8 +7,8 @@ use Bonnier\WP\Sitemap\Observers\AbstractSubject;
 
 class CategorySubject extends AbstractSubject
 {
-    const UPDATE = 'update';
-    const DELETE = 'delete';
+    public const UPDATE = 'update';
+    public const DELETE = 'delete';
 
     /** @var \WP_Term|null */
     private $category;

@@ -5,7 +5,7 @@ namespace Bonnier\WP\Sitemap\Observers\Dependents;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
-use Bonnier\WP\Sitemap\Observers\TagSubject;
+use Bonnier\WP\Sitemap\Observers\Subjects\TagSubject;
 
 class TagDeleteObserver implements ObserverInterface
 {
@@ -23,7 +23,6 @@ class TagDeleteObserver implements ObserverInterface
     public function update(SubjectInterface $subject)
     {
         if ($subject->getType() === TagSubject::DELETE && $tag = $subject->getTag()) {
-
         }
     }
 }

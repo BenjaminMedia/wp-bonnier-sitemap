@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Bonnier\WP\Sitemap\Repositories;
-
 
 use Bonnier\WP\Sitemap\Database\DB;
 use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
@@ -33,11 +31,13 @@ class SitemapRepository
         $this->database->setTable($this->tableName);
     }
 
-    public function query(): Query {
+    public function query(): Query
+    {
         return $this->database->query();
     }
 
-    public function results(Query $query): ?array {
+    public function results(Query $query): ?array
+    {
         try {
             return $this->database->getResults($query);
         } catch (Exception $e) {
@@ -47,9 +47,13 @@ class SitemapRepository
 
     public function all(): ?Collection
     {
-        $query = $this->database->query()->select('*');
-        if ($sitemaps = $this->database->getResults($query)) {
-            return $this->mapSitemaps($sitemaps);
+        try {
+            $query = $this->database->query()->select('*');
+            if ($sitemaps = $this->database->getResults($query)) {
+                return $this->mapSitemaps($sitemaps);
+            }
+        } catch (Exception $exception) {
+            return null;
         }
         return null;
     }
@@ -58,14 +62,17 @@ class SitemapRepository
      * @param $key
      * @param $value
      * @return Collection|null
-     * @throws \Exception
      */
     public function findAllBy($key, $value): ?Collection
     {
-        $query = $this->database->query()->select('*')
-            ->where([$key, $value]);
-        if ($sitemaps = $this->database->getResults($query)) {
-            return $this->mapSitemaps($sitemaps);
+        try {
+            $query = $this->database->query()->select('*')
+                ->where([$key, $value]);
+            if ($sitemaps = $this->database->getResults($query)) {
+                return $this->mapSitemaps($sitemaps);
+            }
+        } catch (Exception $exception) {
+            return null;
         }
 
         return null;
@@ -83,7 +90,10 @@ class SitemapRepository
                     return Sitemap::createFromArray($sitemap);
                 }
             }
-        } catch (Exception $exception) {}
+        } catch (Exception $exception) {
+            return null;
+        }
+
         return null;
     }
 
@@ -94,7 +104,7 @@ class SitemapRepository
     public function findByTerm(\WP_Term $term): ?Sitemap
     {
         try {
-        $query = $this->database->query()->select('*')
+            $query = $this->database->query()->select('*')
             ->where(['wp_id', $term->term_id], Query::FORMAT_INT)
             ->andWhere(['post_type', $term->taxonomy])
             ->limit(1);
@@ -103,7 +113,8 @@ class SitemapRepository
                     return Sitemap::createFromArray($sitemap);
                 }
             }
-        } catch (Exception $exception) {}
+        } catch (Exception $exception) {
+        }
         return null;
     }
 
@@ -168,7 +179,7 @@ class SitemapRepository
             if ($sitemap) {
                 try {
                     return $this->database->delete($sitemap->getID());
-                } catch(Exception $exception) {
+                } catch (Exception $exception) {
                     return false;
                 }
             }

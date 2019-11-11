@@ -5,7 +5,6 @@ namespace Bonnier\WP\Sitemap\Models;
 use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
-use WP_CLI\Fetchers\Site;
 
 class Sitemap implements Arrayable
 {
@@ -34,7 +33,7 @@ class Sitemap implements Arrayable
 
     public static function createFromArray(array $data): Sitemap
     {
-        return (new self)->fromArray($data);
+        return (new self())->fromArray($data);
     }
 
     public static function createFromPost(\WP_Post $post): Sitemap
@@ -185,7 +184,11 @@ class Sitemap implements Arrayable
         $this->locale = Arr::get($data, 'locale', '');
         $this->postType = Arr::get($data, 'post_type', '');
         $this->wpID = intval(Arr::get($data, 'wp_id', 0));
-        $this->modifiedAt = new \DateTime(Arr::get($data, 'modified_at', 'now'));
+        try {
+            $this->modifiedAt = new \DateTime(Arr::get($data, 'modified_at', 'now'));
+        } catch (\Exception $exception) {
+            $this->modifiedAt = strtotime('now');
+        }
 
         return $this;
     }

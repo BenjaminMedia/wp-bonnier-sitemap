@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Bonnier\WP\Sitemap\Commands;
-
 
 class GenerateCommand extends \WP_CLI_Command
 {

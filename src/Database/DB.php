@@ -121,13 +121,15 @@ class DB
     public function update(int $rowId, array $data)
     {
         $this->disableErrorOutput();
-        if ($this->wpdb->update(
-            $this->table,
-            $data,
-            ['id' => $rowId],
-            self::getDataFormat($data),
-            ['%d']
-        ) === false) {
+        if (
+            $this->wpdb->update(
+                $this->table,
+                $data,
+                ['id' => $rowId],
+                self::getDataFormat($data),
+                ['%d']
+            ) === false
+        ) {
             $error = $this->wpdb->last_error;
             if (Str::startsWith($error, 'Duplicate entry ')) {
                 $uniqueKey = Str::after($error, ' for key ');

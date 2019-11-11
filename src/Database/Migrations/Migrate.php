@@ -6,8 +6,8 @@ use Bonnier\WP\Sitemap\Database\Exceptions\MigrationException;
 
 class Migrate
 {
-    const OPTION = 'bonnier-sitemap-migration';
-    const TABLE = 'bonnier_sitemap';
+    public const OPTION = 'bonnier-sitemap-migration';
+    public const TABLE = 'bonnier_sitemap';
 
     public static function run()
     {

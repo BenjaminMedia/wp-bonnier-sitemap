@@ -4,11 +4,11 @@ namespace Bonnier\WP\Sitemap\Database;
 
 class Query
 {
-    const FORMAT_INT = 0;
-    const FORMAT_STRING = 1;
+    public const FORMAT_INT = 0;
+    public const FORMAT_STRING = 1;
 
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
+    public const ORDER_ASC = 'ASC';
+    public const ORDER_DESC = 'DESC';
 
     private $table;
     private $query;

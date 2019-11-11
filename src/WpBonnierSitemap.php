@@ -9,7 +9,7 @@ use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
 
 class WpBonnierSitemap
 {
-    const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
+    public const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
 
     private static $instance;
 
@@ -34,7 +34,7 @@ class WpBonnierSitemap
         $this->pluginUrl = plugin_dir_url($this->dir);
 
         try {
-            $this->sitemapRepository = new SitemapRepository(new DB);
+            $this->sitemapRepository = new SitemapRepository(new DB());
         } catch (\Exception $exception) {
             wp_die($exception->getMessage());
         }
@@ -48,7 +48,7 @@ class WpBonnierSitemap
     public static function instance()
     {
         if (!self::$instance) {
-            self::$instance = new self;
+            self::$instance = new self();
             /**
              * Run after the plugin has been loaded.
              */
@@ -60,7 +60,7 @@ class WpBonnierSitemap
 
     public static function boot()
     {
-        self::$instance = new self;
+        self::$instance = new self();
     }
 
     /**
