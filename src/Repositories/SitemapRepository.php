@@ -83,7 +83,7 @@ class SitemapRepository
         try {
             $query = $this->database->query()->select('*')
                 ->where(['wp_id', $post->ID], Query::FORMAT_INT)
-                ->andWhere(['post_type', $post->post_type])
+                ->andWhere(['wp_type', $post->post_type])
                 ->limit(1);
             if ($sitemaps = $this->database->getResults($query)) {
                 if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
@@ -106,7 +106,7 @@ class SitemapRepository
         try {
             $query = $this->database->query()->select('*')
             ->where(['wp_id', $term->term_id], Query::FORMAT_INT)
-            ->andWhere(['post_type', $term->taxonomy])
+            ->andWhere(['wp_type', $term->taxonomy])
             ->limit(1);
             if ($sitemaps = $this->database->getResults($query)) {
                 if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
@@ -172,6 +172,33 @@ class SitemapRepository
         return null;
     }
 
+    public function insertOrUpdateTag(?\WP_Term $tag): ?Sitemap
+    {
+        if ($tag) {
+            $sitemap = $this->findByTerm($tag);
+            if ($sitemap) {
+                $sitemap->setUrl(get_tag_link($tag));
+                try {
+                    if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
+                        return $sitemap;
+                    }
+                } catch (Exception $exception) {
+                    return null;
+                }
+            } else {
+                try {
+                    $sitemap = Sitemap::createFromTag($tag);
+                    $sitemapID = $this->database->insert($sitemap->toArray());
+                    return $sitemap->setID($sitemapID);
+                } catch (Exception $exception) {
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function deleteByPost(?\WP_Post $post): bool
     {
         if ($post) {
@@ -186,6 +213,22 @@ class SitemapRepository
             return true;
         }
 
+        return false;
+    }
+
+    public function deleteByTerm(?\WP_Term $term): bool
+    {
+        if ($term) {
+            $sitemap = $this->findByTerm($term);
+            if ($sitemap) {
+                try {
+                    return $this->database->delete($sitemap->getID());
+                } catch (Exception $exception) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return false;
     }
 

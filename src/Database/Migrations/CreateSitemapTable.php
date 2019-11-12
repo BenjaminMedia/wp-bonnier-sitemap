@@ -19,11 +19,12 @@ class CreateSitemapTable implements Migration
         CREATE TABLE `$table` (
           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
           `url` text CHARACTER SET utf8 NOT NULL,
-          `locale` varchar(2) CHARACTER SET utf8 NOT NULL,
-          `post_type` text CHARACTER SET utf8 NOT NULL,
-          `wp_id` text CHARACTER SET utf8 DEFAULT NULL,
+          `locale` char(2) CHARACTER SET utf8 NOT NULL,
+          `wp_id` int(11) unsigned NOT NULL,
+          `wp_type` varchar(30) CHARACTER SET utf8 NOT NULL,
           `modified_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-          PRIMARY KEY (`id`)
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `wp_object` (`wp_id`, `wp_type`)
         ) $charset;
         SET sql_notes = 1;
         ";

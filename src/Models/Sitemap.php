@@ -18,7 +18,7 @@ class Sitemap implements Arrayable
     private $locale;
 
     /** @var string */
-    private $postType;
+    private $wpType;
 
     /** @var int */
     private $wpID;
@@ -41,7 +41,7 @@ class Sitemap implements Arrayable
         $sitemap = new Sitemap();
         $sitemap->setUrl(get_permalink($post))
             ->setLocale(LocaleHelper::getPostLocale($post->ID))
-            ->setPostType($post->post_type)
+            ->setWpType($post->post_type)
             ->setWpID($post->ID)
             ->setModifiedAt(new \DateTime());
         return $sitemap;
@@ -52,7 +52,7 @@ class Sitemap implements Arrayable
         $sitemap = new Sitemap();
         $sitemap->setUrl(get_category_link($category))
             ->setLocale(LocaleHelper::getTermLocale($category->term_id))
-            ->setPostType($category->taxonomy)
+            ->setWpType($category->taxonomy)
             ->setWpID($category->term_id)
             ->setModifiedAt(new \DateTime());
         return $sitemap;
@@ -63,7 +63,7 @@ class Sitemap implements Arrayable
         $sitemap = new Sitemap();
         $sitemap->setUrl(get_tag_link($tag))
             ->setLocale(LocaleHelper::getTermLocale($tag->term_id))
-            ->setPostType($tag->taxonomy)
+            ->setWpType($tag->taxonomy)
             ->setWpID($tag->term_id)
             ->setModifiedAt(new \DateTime());
         return $sitemap;
@@ -126,18 +126,18 @@ class Sitemap implements Arrayable
     /**
      * @return string
      */
-    public function getPostType(): string
+    public function getWpType(): string
     {
-        return $this->postType;
+        return $this->wpType;
     }
 
     /**
-     * @param string $postType
+     * @param string $wpType
      * @return Sitemap
      */
-    public function setPostType(string $postType): Sitemap
+    public function setWpType(string $wpType): Sitemap
     {
-        $this->postType = $postType;
+        $this->wpType = $wpType;
         return $this;
     }
 
@@ -182,8 +182,8 @@ class Sitemap implements Arrayable
         $this->sitemapID = intval(Arr::get($data, 'id', 0));
         $this->url = Arr::get($data, 'url', '');
         $this->locale = Arr::get($data, 'locale', '');
-        $this->postType = Arr::get($data, 'post_type', '');
         $this->wpID = intval(Arr::get($data, 'wp_id', 0));
+        $this->wpType = Arr::get($data, 'wp_type', '');
         try {
             $this->modifiedAt = new \DateTime(Arr::get($data, 'modified_at', 'now'));
         } catch (\Exception $exception) {
@@ -204,7 +204,7 @@ class Sitemap implements Arrayable
             'id' => $this->sitemapID,
             'url' => $this->url,
             'locale' => $this->locale,
-            'post_type' => $this->postType,
+            'wp_type' => $this->wpType,
             'wp_id' => $this->wpID,
             'modified_at' => $this->modifiedAt->format('Y-m-d H:i:s')
         ];

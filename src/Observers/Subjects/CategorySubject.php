@@ -21,6 +21,8 @@ class CategorySubject extends AbstractSubject
 
     private $affectedPosts = [];
 
+    private $affectedCategories = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -55,6 +57,11 @@ class CategorySubject extends AbstractSubject
     public function getAffectedPosts(): array
     {
         return $this->affectedPosts;
+    }
+
+    public function getAffectedCategories(): array
+    {
+        return $this->affectedCategories;
     }
 
     /**
@@ -98,6 +105,7 @@ class CategorySubject extends AbstractSubject
     {
         if ($taxonomy === 'category') {
             $this->locale = LocaleHelper::getTermLocale($termID);
+            $this->affectedCategories = get_categories(['parent' => $termID, 'hide_empty' => false]);
         }
     }
 

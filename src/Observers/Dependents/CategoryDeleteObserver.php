@@ -29,5 +29,18 @@ class CategoryDeleteObserver implements ObserverInterface
         if (!$category) {
             return;
         }
+        $this->sitemapRepository->deleteByTerm($category);
+        if (!empty($children = $subject->getAffectedCategories())) {
+            foreach ($children as $child) {
+                do_action('edited_category', $child->term_id, $child->term_taxonomy_id);
+            }
+        }
+
+        if (!empty($postIDs = $subject->getAffectedPosts())) {
+            foreach ($postIDs as $postID) {
+                $post = get_post($postID);
+                do_action('save_post', $post->ID, $post, true);
+            }
+        }
     }
 }

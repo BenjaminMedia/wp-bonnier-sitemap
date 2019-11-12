@@ -22,7 +22,13 @@ class TagDeleteObserver implements ObserverInterface
      */
     public function update(SubjectInterface $subject)
     {
-        if ($subject->getType() === TagSubject::DELETE && $tag = $subject->getTag()) {
+        if ($subject->getType() !== TagSubject::DELETE) {
+            return;
         }
+        $tag = $subject->getTag();
+        if (!$tag) {
+            return;
+        }
+        $this->sitemapRepository->deleteByTerm($tag);
     }
 }

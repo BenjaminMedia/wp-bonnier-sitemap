@@ -6,6 +6,7 @@ use Bonnier\WP\Sitemap\Observers\Subjects\PostSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
+use Bonnier\WP\Sitemap\WpBonnierSitemap;
 
 class PostChangeObserver implements ObserverInterface
 {
@@ -23,10 +24,18 @@ class PostChangeObserver implements ObserverInterface
     public function update(SubjectInterface $subject)
     {
         if ($post = $subject->getPost()) {
-            if ($post->post_status === 'publish') {
+            if (
+                $post->post_status === 'publish' &&
+                apply_filters(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, true, $post)
+            ) {
                 $this->sitemapRepository->insertOrUpdatePost($subject->getPost());
             } else {
                 $this->sitemapRepository->deleteByPost($post);
+            }
+            if (!empty($tags = wp_get_post_terms($post->ID, 'post_tag', ['hide_empty' => false]))) {
+                foreach ($tags as $tag) {
+                    do_action('edited_post_tag', $tag->term_id);
+                }
             }
         }
     }

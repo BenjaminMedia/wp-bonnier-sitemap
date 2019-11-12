@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
+use Bonnier\WP\Sitemap\Helpers\Utils;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
@@ -22,7 +23,17 @@ class TagSlugChangeObserver implements ObserverInterface
      */
     public function update(SubjectInterface $subject)
     {
-        if ($subject->getType() === TagSubject::UPDATE && $tag = $subject->getTag()) {
+        if ($subject->getType() !== TagSubject::UPDATE) {
+            return;
         }
+        $tag = $subject->getTag();
+        if (!$tag) {
+            return;
+        }
+        if ($tag->count < Utils::getPostTagMinimumCount()) {
+            $this->sitemapRepository->deleteByTerm($tag);
+            return;
+        }
+        $this->sitemapRepository->insertOrUpdateTag($tag);
     }
 }

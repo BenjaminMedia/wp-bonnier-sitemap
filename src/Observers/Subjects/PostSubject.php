@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Observers\Subjects;
 
+use Bonnier\WP\Sitemap\Helpers\Utils;
 use Bonnier\WP\Sitemap\Observers\AbstractSubject;
 use Bonnier\WP\Sitemap\WpBonnierSitemap;
 
@@ -42,19 +43,10 @@ class PostSubject extends AbstractSubject
     {
         if (
             !(wp_is_post_revision($postID) || wp_is_post_autosave($postID)) ||
-            !$this->validatePostType($post->post_type)
+            !in_array($post->post_type, Utils::getValidPostTypes())
         ) {
             $this->post = $post;
             $this->notify();
         }
-    }
-
-    private function validatePostType(string $postType): bool
-    {
-        $validPostTypes = array_filter(get_post_types(['public' => true]), function (string $postType) {
-            return $postType !== 'attachment';
-        });
-        $validPostTypes = apply_filters(WpBonnierSitemap::FILTER_ALLOWED_POST_TYPES, $validPostTypes);
-        return in_array($postType, $validPostTypes);
     }
 }

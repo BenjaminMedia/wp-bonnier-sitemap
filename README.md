@@ -1,6 +1,8 @@
 # WP Bonnier Sitemap
 A plugin for handling sitemaps in WordPress
 
+This plugin will monitor all public WP_Post types and 
+
 ## Filters
 This plugin makes some filters available to developers of WordPress sites, in order to customize the validation and handling of content to be processed by this plugin.
 
@@ -17,7 +19,37 @@ add_filter('sitemap_allowed_post_types', function(array $postTypes) {
     return array_filter($postTypes, function(string $postType) {
         return $postType !== 'page';
     });
-}, 10, 1);
+}, 10);
 ```
 
 ---
+
+**WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP = 'post_allowed_in_sitemap'**
+
+This filter will allow you to hijack the validation for whether a WP_Post is supposed to be in the sitemap.
+
+Default: true
+
+```php
+add_filter('post_allowed_in_sitemap', function (bool $allowed, \WP_Post $post) {
+    if ($post->post_type !== 'page') {
+        $allowed = false;
+    }
+    return $allowed;
+}, 10, 2);
+```
+
+---
+
+**WpBonnierSitemap::FILTER_POST_TAG_MINIMUM_COUNT = 'post_tag_minimum_count'**
+
+This filter will allow you to define the minimum number of posts a tag needs to be attached to, for it to be included in a sitemap.
+
+Default: 5
+
+```php
+add_filter('post_tag_minimum_count', function (int $count) {
+    // For SEO purposes, our sitemap cannot have less than 10 posts for tag pages.
+    return 10;
+}, 10);
+``` 

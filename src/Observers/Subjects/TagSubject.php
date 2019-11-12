@@ -24,6 +24,7 @@ class TagSubject extends AbstractSubject
         parent::__construct();
         add_action('create_post_tag', [$this, 'updateTag']);
         add_action('edited_post_tag', [$this, 'updateTag']);
+        add_action('set_object_terms', [$this, 'updatedObjectTerms'], 10, 6);
         add_action('pre_delete_term', [$this, 'preDeleteTag'], 0, 2);
         add_action('delete_post_tag', [$this, 'deleteTag'], 10, 3);
     }
@@ -76,6 +77,22 @@ class TagSubject extends AbstractSubject
             $this->tag = $tag;
             $this->type = self::UPDATE;
             $this->notify();
+        }
+    }
+
+    public function updatedObjectTerms(
+        int $objectID,
+        array $terms,
+        array $ttIDs,
+        string $taxonomy,
+        bool $append,
+        array $oldTTIDs
+    ) {
+        if ($taxonomy !== 'post_tag') {
+            return;
+        }
+        foreach (array_merge($ttIDs, $oldTTIDs) as $termID) {
+            $this->updateTag($termID);
         }
     }
 

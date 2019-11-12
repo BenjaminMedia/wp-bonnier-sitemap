@@ -10,6 +10,8 @@ use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
 class WpBonnierSitemap
 {
     public const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
+    public const FILTER_POST_ALLOWED_IN_SITEMAP = 'post_allowed_in_sitemap';
+    public const FILTER_POST_TAG_MINIMUM_COUNT = 'post_tag_minimum_count';
 
     private static $instance;
 

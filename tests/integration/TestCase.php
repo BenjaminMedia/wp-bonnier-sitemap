@@ -47,7 +47,7 @@ class TestCase extends WPTestCase
     {
         $this->assertEquals($post->ID, $sitemap->getWpID());
         $this->assertEquals(get_permalink($post), $sitemap->getUrl());
-        $this->assertEquals($post->post_type, $sitemap->getPostType());
+        $this->assertEquals($post->post_type, $sitemap->getWpType());
         $this->assertEquals(LocaleHelper::getPostLocale($post->ID), $sitemap->getLocale());
     }
 
@@ -55,7 +55,7 @@ class TestCase extends WPTestCase
     {
         $this->assertEquals($category->term_id, $sitemap->getWpID());
         $this->assertEquals(get_category_link($category), $sitemap->getUrl());
-        $this->assertEquals($category->taxonomy, $sitemap->getPostType());
+        $this->assertEquals($category->taxonomy, $sitemap->getWpType());
         $this->assertEquals(LocaleHelper::getTermLocale($category->term_id), $sitemap->getLocale());
     }
 
@@ -63,7 +63,7 @@ class TestCase extends WPTestCase
     {
         $this->assertEquals($tag->term_id, $sitemap->getWpID());
         $this->assertEquals(get_tag_link($tag), $sitemap->getUrl());
-        $this->assertEquals($tag->taxonomy, $sitemap->getPostType());
+        $this->assertEquals($tag->taxonomy, $sitemap->getWpType());
         $this->assertEquals(LocaleHelper::getTermLocale($tag->term_id), $sitemap->getLocale());
     }
 }
