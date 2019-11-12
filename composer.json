@@ -2,6 +2,7 @@
   "name": "bonnier/wp-bonnier-sitemap",
   "description": "A Sitemap plugin for the Willow platform",
   "type": "wordpress-plugin",
+  "license": "MIT",
   "authors": [
     {
       "name": "Bonnier Publications",

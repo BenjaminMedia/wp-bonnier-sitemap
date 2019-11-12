@@ -43,7 +43,7 @@ class Sitemap implements Arrayable
             ->setLocale(LocaleHelper::getPostLocale($post->ID))
             ->setWpType($post->post_type)
             ->setWpID($post->ID)
-            ->setModifiedAt(new \DateTime());
+            ->setModifiedAt(new \DateTime($post->post_modified));
         return $sitemap;
     }
 
