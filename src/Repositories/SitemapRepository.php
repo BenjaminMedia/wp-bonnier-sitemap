@@ -45,15 +45,43 @@ class SitemapRepository
         }
     }
 
+    public function getOverview(?string $locale = null)
+    {
+        try {
+            $query = $this->query()
+                ->select('wp_type, MAX(modified_at) modified_at, COUNT(id) as amount');
+            if ($locale) {
+                $query->where(['locale', $locale]);
+            }
+            $query->groupBy('wp_type');
+        } catch (Exception $exception) {
+            return null;
+        }
+        return $this->results($query);
+    }
+
+    public function getByType(string $type, int $page = 1, int $perPage = 500, string $locale = null)
+    {
+        $query = $this->query()->select('*')
+        ->where(['wp_type', $type]);
+        if ($locale) {
+            $query->andWhere(['locale', $locale]);
+        }
+        $query->limit($perPage)
+        ->offset($perPage * ($page - 1));
+
+        return $this->results($query);
+    }
+
     public function all(): ?Collection
     {
         try {
-            $query = $this->database->query()->select('*');
-            if ($sitemaps = $this->database->getResults($query)) {
-                return $this->mapSitemaps($sitemaps);
-            }
+            $query = $this->query()->select('*');
         } catch (Exception $exception) {
             return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            return $this->mapSitemaps($sitemaps);
         }
         return null;
     }
@@ -66,13 +94,13 @@ class SitemapRepository
     public function findAllBy($key, $value): ?Collection
     {
         try {
-            $query = $this->database->query()->select('*')
+            $query = $this->query()->select('*')
                 ->where([$key, $value]);
-            if ($sitemaps = $this->database->getResults($query)) {
-                return $this->mapSitemaps($sitemaps);
-            }
         } catch (Exception $exception) {
             return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            return $this->mapSitemaps($sitemaps);
         }
 
         return null;
@@ -81,17 +109,17 @@ class SitemapRepository
     public function findByPost(\WP_Post $post): ?Sitemap
     {
         try {
-            $query = $this->database->query()->select('*')
+            $query = $this->query()->select('*')
                 ->where(['wp_id', $post->ID], Query::FORMAT_INT)
                 ->andWhere(['wp_type', $post->post_type])
                 ->limit(1);
-            if ($sitemaps = $this->database->getResults($query)) {
-                if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
-                    return Sitemap::createFromArray($sitemap);
-                }
-            }
         } catch (Exception $exception) {
             return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                return Sitemap::createFromArray($sitemap);
+            }
         }
 
         return null;
@@ -104,16 +132,17 @@ class SitemapRepository
     public function findByTerm(\WP_Term $term): ?Sitemap
     {
         try {
-            $query = $this->database->query()->select('*')
-            ->where(['wp_id', $term->term_id], Query::FORMAT_INT)
-            ->andWhere(['wp_type', $term->taxonomy])
-            ->limit(1);
-            if ($sitemaps = $this->database->getResults($query)) {
-                if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
-                    return Sitemap::createFromArray($sitemap);
-                }
-            }
+            $query = $this->query()->select('*')
+                ->where(['wp_id', $term->term_id], Query::FORMAT_INT)
+                ->andWhere(['wp_type', $term->taxonomy])
+                ->limit(1);
         } catch (Exception $exception) {
+            return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                return Sitemap::createFromArray($sitemap);
+            }
         }
         return null;
     }
