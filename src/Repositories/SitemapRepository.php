@@ -70,7 +70,10 @@ class SitemapRepository
         $query->limit($perPage)
         ->offset($perPage * ($page - 1));
 
-        return $this->results($query);
+        if ($results = $this->results($query)) {
+            return $this->mapSitemaps($results);
+        }
+        return null;
     }
 
     public function all(): ?Collection
