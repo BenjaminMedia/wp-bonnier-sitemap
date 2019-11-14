@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap;
 
+use Bonnier\WP\Sitemap\Observers\Observers;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Commands\Commands;
 use Bonnier\WP\Sitemap\Database\DB;
@@ -41,6 +42,7 @@ class WpBonnierSitemap
             wp_die($exception->getMessage());
         }
 
+        Observers::bootstrap($this->sitemapRepository);
         Commands::register();
     }
 
