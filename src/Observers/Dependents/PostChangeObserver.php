@@ -3,6 +3,7 @@
 namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
 use Bonnier\WP\Sitemap\Observers\Subjects\PostSubject;
+use Bonnier\WP\Sitemap\Observers\Subjects\TagSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
@@ -11,10 +12,12 @@ use Bonnier\WP\Sitemap\WpBonnierSitemap;
 class PostChangeObserver implements ObserverInterface
 {
     private $sitemapRepository;
+    private $tagObserver;
 
     public function __construct(SitemapRepository $sitemapRepository)
     {
         $this->sitemapRepository = $sitemapRepository;
+        $this->tagObserver = new TagSlugChangeObserver($sitemapRepository);
     }
 
     /**
@@ -34,7 +37,9 @@ class PostChangeObserver implements ObserverInterface
             }
             if (!empty($tags = wp_get_post_terms($post->ID, 'post_tag', ['hide_empty' => false]))) {
                 foreach ($tags as $tag) {
-                    do_action('edited_post_tag', $tag->term_id);
+                    $subject = new TagSubject();
+                    $subject->setTag($tag)->setType(TagSubject::UPDATE);
+                    $this->tagObserver->update($subject);
                 }
             }
         }

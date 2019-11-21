@@ -154,14 +154,18 @@ class SitemapRepository
     {
         if ($post) {
             $sitemap = $this->findByPost($post);
+
             if ($sitemap) {
-                $sitemap->setUrl(get_permalink($post));
-                try {
-                    if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
-                        return $sitemap;
+                $permalink = get_permalink($post);
+                if ($sitemap->getUrl() !== $permalink) {
+                    $sitemap->setUrl($permalink);
+                    try {
+                        if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
+                            return $sitemap;
+                        }
+                    } catch (Exception $exception) {
+                        return null;
                     }
-                } catch (Exception $exception) {
-                    return null;
                 }
             } else {
                 try {
