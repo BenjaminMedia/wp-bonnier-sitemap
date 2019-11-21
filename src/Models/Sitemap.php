@@ -11,24 +11,25 @@ class Sitemap implements Arrayable
     /** @var int */
     private $sitemapID;
 
-    /** @var string */
+    /** @var string|null */
     private $url;
 
-    /** @var string */
+    /** @var string|null */
     private $locale;
 
-    /** @var string */
+    /** @var string|null */
     private $wpType;
 
     /** @var int */
     private $wpID;
 
-    /** @var \DateTime */
+    /** @var \DateTime|null */
     private $modifiedAt;
 
     public function __construct()
     {
         $this->sitemapID = 0;
+        $this->wpID = 0;
     }
 
     public static function createFromArray(array $data): Sitemap
@@ -106,9 +107,9 @@ class Sitemap implements Arrayable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLocale(): string
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
@@ -123,10 +124,11 @@ class Sitemap implements Arrayable
         return $this;
     }
 
+
     /**
-     * @return string
+     * @return string|null
      */
-    public function getWpType(): string
+    public function getWpType(): ?string
     {
         return $this->wpType;
     }
@@ -160,9 +162,9 @@ class Sitemap implements Arrayable
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getModifiedAt(): \DateTime
+    public function getModifiedAt(): ?\DateTime
     {
         return $this->modifiedAt;
     }
