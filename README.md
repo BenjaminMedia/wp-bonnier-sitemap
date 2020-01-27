@@ -53,3 +53,39 @@ add_filter('post_tag_minimum_count', function (int $count) {
     return 10;
 }, 10);
 ``` 
+
+---
+
+**WpBonnierSitemap::FILTER_POST_PERMALINK = 'sitemap_post_permalink'**
+
+This filter will allow you to alter the generated permalink for a post being saved.
+
+```php
+add_filter('sitemap_post_permalink', function (string $permalink, \WP_Post $post) {
+    return $permalink;
+}, 10, 2);
+``` 
+
+---
+
+**WpBonnierSitemap::FILTER_CATEGORY_PERMALINK = 'sitemap_category_permalink'**
+
+This filter will allow you to alter the generated permalink for a category being saved.
+
+```php
+add_filter('sitemap_category_permalink', function (string $permalink, \WP_Term $category) {
+    return $permalink;
+}, 10, 2);
+``` 
+
+---
+
+**WpBonnierSitemap::FILTER_TAG_PERMALINK = 'sitemap_tag_permalink'**
+
+This filter will allow you to alter the generated permalink for a post_tag being saved.
+
+```php
+add_filter('sitemap_tag_permalink', function (string $permalink, \WP_Term $tag) {
+    return $permalink;
+}, 10, 2);
+```
