@@ -6,6 +6,7 @@ use Bonnier\WP\Sitemap\Database\DB;
 use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
 use Bonnier\WP\Sitemap\Database\Query;
 use Bonnier\WP\Sitemap\Models\Sitemap;
+use Bonnier\WP\Sitemap\WpBonnierSitemap;
 use Exception;
 use Illuminate\Support\Collection;
 
@@ -157,6 +158,7 @@ class SitemapRepository
 
             if ($sitemap) {
                 $permalink = get_permalink($post);
+                $permalink = apply_filters(WpBonnierSitemap::FILTER_POST_PERMALINK, $permalink, $post);
                 if ($sitemap->getUrl() !== $permalink) {
                     $sitemap->setUrl($permalink);
                     try {
@@ -186,7 +188,9 @@ class SitemapRepository
         if ($category) {
             $sitemap = $this->findByTerm($category);
             if ($sitemap) {
-                $sitemap->setUrl(get_category_link($category));
+                $permalink = get_category_link($category);
+                $permalink = apply_filters(WpBonnierSitemap::FILTER_CATEGORY_PERMALINK, $permalink, $category);
+                $sitemap->setUrl($permalink);
                 try {
                     if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
                         return $sitemap;
@@ -213,7 +217,9 @@ class SitemapRepository
         if ($tag) {
             $sitemap = $this->findByTerm($tag);
             if ($sitemap) {
-                $sitemap->setUrl(get_tag_link($tag));
+                $permalink = get_tag_link($tag);
+                $permalink = apply_filters(WpBonnierSitemap::FILTER_TAG_PERMALINK, $permalink, $tag);
+                $sitemap->setUrl($permalink);
                 try {
                     if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
                         return $sitemap;

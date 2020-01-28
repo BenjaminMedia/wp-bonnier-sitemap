@@ -42,8 +42,8 @@ class PostSubject extends AbstractSubject
     public function updatePost(int $postID, \WP_Post $post)
     {
         if (
-            !(wp_is_post_revision($postID) || wp_is_post_autosave($postID)) ||
-            !in_array($post->post_type, Utils::getValidPostTypes())
+            !(wp_is_post_revision($postID) || wp_is_post_autosave($postID)) &&
+            in_array($post->post_type, Utils::getValidPostTypes())
         ) {
             $this->post = $post;
             $this->notify();

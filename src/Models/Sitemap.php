@@ -3,6 +3,7 @@
 namespace Bonnier\WP\Sitemap\Models;
 
 use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
+use Bonnier\WP\Sitemap\WpBonnierSitemap;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
@@ -39,8 +40,10 @@ class Sitemap implements Arrayable
 
     public static function createFromPost(\WP_Post $post): Sitemap
     {
+        $permalink = get_permalink($post);
+        $permalink = apply_filters(WpBonnierSitemap::FILTER_POST_PERMALINK, $permalink, $post);
         $sitemap = new Sitemap();
-        $sitemap->setUrl(get_permalink($post))
+        $sitemap->setUrl($permalink)
             ->setLocale(LocaleHelper::getPostLocale($post->ID))
             ->setWpType($post->post_type)
             ->setWpID($post->ID)
@@ -50,8 +53,10 @@ class Sitemap implements Arrayable
 
     public static function createFromCategory(\WP_Term $category): Sitemap
     {
+        $permalink = get_category_link($category);
+        $permalink = apply_filters(WpBonnierSitemap::FILTER_CATEGORY_PERMALINK, $permalink, $category);
         $sitemap = new Sitemap();
-        $sitemap->setUrl(get_category_link($category))
+        $sitemap->setUrl($permalink)
             ->setLocale(LocaleHelper::getTermLocale($category->term_id))
             ->setWpType($category->taxonomy)
             ->setWpID($category->term_id)
@@ -61,8 +66,10 @@ class Sitemap implements Arrayable
 
     public static function createFromTag(\WP_Term $tag): Sitemap
     {
+        $permalink = get_tag_link($tag);
+        $permalink = apply_filters(WpBonnierSitemap::FILTER_TAG_PERMALINK, $permalink, $tag);
         $sitemap = new Sitemap();
-        $sitemap->setUrl(get_tag_link($tag))
+        $sitemap->setUrl($permalink)
             ->setLocale(LocaleHelper::getTermLocale($tag->term_id))
             ->setWpType($tag->taxonomy)
             ->setWpID($tag->term_id)
