@@ -129,6 +129,24 @@ class SitemapRepository
         return null;
     }
 
+    public function findByUser(\WP_User $user): ?Sitemap
+    {
+        try {
+            $query = $this->query()->select('*')
+            ->where(['wp_id', $user->ID], Query::FORMAT_INT)
+            ->andWhere(['wp_type', 'user'])
+            ->limit(1);
+        } catch (Exception $exception) {
+            return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                return Sitemap::createFromArray($sitemap);
+            }
+        }
+        return null;
+    }
+
     /**
      * @param \WP_Term $term
      * @return Sitemap|null
@@ -180,6 +198,18 @@ class SitemapRepository
             }
         }
 
+        return null;
+    }
+
+    public function insertOrUpdateUser(?\WP_User $user): ?Sitemap
+    {
+        if ($user) {
+            $sitemap = $this->findByUser($user);
+
+            if ($sitemap) {
+
+            }
+        }
         return null;
     }
 
