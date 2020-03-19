@@ -8,6 +8,7 @@ use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
 use Bonnier\WP\Sitemap\Observers\Subjects\UserSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
+use Bonnier\WP\Sitemap\WpBonnierSitemap;
 use Illuminate\Support\Arr;
 
 class UserUpdateObserver implements ObserverInterface
@@ -32,12 +33,11 @@ class UserUpdateObserver implements ObserverInterface
         if (!$user) {
             return;
         }
-        
-        $meta = get_user_meta($user->ID);
-        $insertOrUpdate = $meta && (Arr::get($meta, 'public.0', '0') === '1');
+
+        $allowInSitemap = apply_filters(WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP, true, $user->ID, $user);
         $minPosts = Utils::getUserMinimumCount();
         foreach (LocaleHelper::getLanguages() as $locale) {
-            if ($insertOrUpdate && Utils::countUserPosts($user, $locale) > $minPosts) {
+            if ($allowInSitemap && Utils::countUserPosts($user, $locale) >= $minPosts) {
                 $this->sitemapRepository->insertOrUpdateUser($user, $locale);
             } else {
                 $this->sitemapRepository->deleteByUser($user, $locale);

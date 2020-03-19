@@ -104,3 +104,15 @@ add_filter('sitemap_tag_permalink', function (string $permalink, \WP_Term $tag) 
     return $permalink;
 }, 10, 2);
 ```
+
+---
+
+**WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap'**
+
+This filter will allow you to apply your own rules for registering the user in the sitemap table.
+
+```php
+add_filter('allow_user_in_sitemap', function (bool $allowInSitemap, int $userID, \WP_User $user) {
+    return $allowInSitemap;
+}, 10, 3);
+``` 

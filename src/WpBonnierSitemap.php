@@ -17,6 +17,7 @@ class WpBonnierSitemap
     public const FILTER_POST_PERMALINK = 'sitemap_post_permalink';
     public const FILTER_CATEGORY_PERMALINK = 'sitemap_category_permalink';
     public const FILTER_TAG_PERMALINK = 'sitemap_tag_permalink';
+    public const FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap';
 
     private static $instance;
 
@@ -46,8 +47,13 @@ class WpBonnierSitemap
             wp_die($exception->getMessage());
         }
 
+        add_filter(self::FILTER_ALLOW_USER_IN_SITEMAP, function (bool $allowInSitemap) {
+            return $allowInSitemap;
+        });
+
         Observers::bootstrap($this->sitemapRepository);
         Commands::register();
+
     }
 
     /**
