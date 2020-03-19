@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
+use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
 use Bonnier\WP\Sitemap\Observers\Subjects\UserSubject;
@@ -28,6 +29,10 @@ class UserDeleteObserver implements ObserverInterface
         $user = $subject->getUser();
         if (!$user) {
             return;
+        }
+
+        foreach (LocaleHelper::getLanguages() as $locale) {
+            $this->sitemapRepository->deleteByUser($user, $locale);
         }
     }
 }

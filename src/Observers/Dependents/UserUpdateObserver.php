@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\Sitemap\Observers\Dependents;
 
+use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
+use Bonnier\WP\Sitemap\Helpers\Utils;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
 use Bonnier\WP\Sitemap\Observers\Subjects\UserSubject;
@@ -32,10 +34,14 @@ class UserUpdateObserver implements ObserverInterface
         }
         
         $meta = get_user_meta($user->ID);
-        if ($meta && (Arr::get($meta, 'public.0', '0') === '1')) {
-            $this->sitemapRepository->insertOrUpdateUser($user);
-        } else {
-            $this->sitemapRepository->deleteByUser($user);
+        $insertOrUpdate = $meta && (Arr::get($meta, 'public.0', '0') === '1');
+        $minPosts = Utils::getUserMinimumCount();
+        foreach (LocaleHelper::getLanguages() as $locale) {
+            if ($insertOrUpdate && Utils::countUserPosts($user, $locale) > $minPosts) {
+                $this->sitemapRepository->insertOrUpdateUser($user, $locale);
+            } else {
+                $this->sitemapRepository->deleteByUser($user, $locale);
+            }
         }
     }
 }

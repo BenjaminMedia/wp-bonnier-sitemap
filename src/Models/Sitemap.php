@@ -77,6 +77,24 @@ class Sitemap implements Arrayable
         return $sitemap;
     }
 
+    public static function createFromUser(\WP_User $user, $locale): Sitemap
+    {
+        $permalink = get_author_posts_url($user->ID);
+        $host = LocaleHelper::getLocalizedUrls()[$locale];
+        $url = sprintf(
+            '%s/%s',
+            rtrim($host, '/'),
+            ltrim(parse_url($permalink, PHP_URL_PATH), '/')
+        );
+        $sitemap = new Sitemap();
+        $sitemap->setUrl($url)
+            ->setLocale($locale)
+            ->setWpType('user')
+            ->setWpID($user->ID)
+            ->setModifiedAt(new \DateTime());
+        return $sitemap;
+    }
+
     /**
      * @return int
      */

@@ -13,6 +13,7 @@ class WpBonnierSitemap
     public const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
     public const FILTER_POST_ALLOWED_IN_SITEMAP = 'post_allowed_in_sitemap';
     public const FILTER_POST_TAG_MINIMUM_COUNT = 'post_tag_minimum_count';
+    public const FILTER_USER_MINIMUM_COUNT = 'user_minimum_count';
     public const FILTER_POST_PERMALINK = 'sitemap_post_permalink';
     public const FILTER_CATEGORY_PERMALINK = 'sitemap_category_permalink';
     public const FILTER_TAG_PERMALINK = 'sitemap_tag_permalink';

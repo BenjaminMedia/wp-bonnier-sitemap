@@ -18,4 +18,24 @@ class Utils
     {
         return apply_filters(WpBonnierSitemap::FILTER_POST_TAG_MINIMUM_COUNT, 5);
     }
+
+    public static function getUserMinimumCount()
+    {
+        return apply_filters(WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT, 5);
+    }
+
+    public static function countUserPosts(\WP_User $user, string $locale)
+    {
+        $count = 0;
+        foreach (self::getValidPostTypes() as $postType) {
+            $query = new \WP_Query([
+                'author' => $user->ID,
+                'post_type' => $postType,
+                'lang' => $locale,
+                'posts_per_page' => -1
+            ]);
+            $count += $query->post_count;
+        }
+        return $count;
+    }
 }
