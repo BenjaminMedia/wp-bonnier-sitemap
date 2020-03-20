@@ -129,6 +129,25 @@ class SitemapRepository
         return null;
     }
 
+    public function findByUser(\WP_User $user, string $locale): ?Sitemap
+    {
+        try {
+            $query = $this->query()->select('*')
+            ->where(['wp_id', $user->ID], Query::FORMAT_INT)
+            ->andWhere(['locale', $locale])
+            ->andWhere(['wp_type', 'user'])
+            ->limit(1);
+        } catch (Exception $exception) {
+            return null;
+        }
+        if ($sitemaps = $this->results($query)) {
+            if (isset($sitemaps[0]) && $sitemap = $sitemaps[0]) {
+                return Sitemap::createFromArray($sitemap);
+            }
+        }
+        return null;
+    }
+
     /**
      * @param \WP_Term $term
      * @return Sitemap|null
@@ -180,6 +199,33 @@ class SitemapRepository
             }
         }
 
+        return null;
+    }
+
+    public function insertOrUpdateUser(?\WP_User $user, string $locale): ?Sitemap
+    {
+        if ($user) {
+            $sitemap = $this->findByUser($user, $locale);
+
+            if ($sitemap) {
+                $sitemap->setModifiedAt(new \DateTime('now'));
+                try {
+                    if ($this->database->update($sitemap->getID(), $sitemap->toArray())) {
+                        return $sitemap;
+                    }
+                } catch (Exception $exception) {
+                    return null;
+                }
+            } else {
+                try {
+                    $sitemap = Sitemap::createFromUser($user, $locale);
+                    $sitemapID = $this->database->insert($sitemap->toArray());
+                    return $sitemap->setID($sitemapID);
+                } catch (Exception $exception) {
+                    return null;
+                }
+            }
+        }
         return null;
     }
 
@@ -244,34 +290,38 @@ class SitemapRepository
     public function deleteByPost(?\WP_Post $post): bool
     {
         if ($post) {
-            $sitemap = $this->findByPost($post);
-            if ($sitemap) {
-                try {
-                    return $this->database->delete($sitemap->getID());
-                } catch (Exception $exception) {
-                    return false;
-                }
-            }
-            return true;
+            return $this->deleteSitemap($this->findByPost($post));
         }
 
+        return false;
+    }
+
+    public function deleteByUser(?\WP_User $user, string $locale): bool
+    {
+        if ($user) {
+            return $this->deleteSitemap($this->findByUser($user, $locale));
+        }
         return false;
     }
 
     public function deleteByTerm(?\WP_Term $term): bool
     {
         if ($term) {
-            $sitemap = $this->findByTerm($term);
-            if ($sitemap) {
-                try {
-                    return $this->database->delete($sitemap->getID());
-                } catch (Exception $exception) {
-                    return false;
-                }
-            }
-            return true;
+            return $this->deleteSitemap($this->findByTerm($term));
         }
         return false;
+    }
+
+    public function deleteSitemap(?Sitemap $sitemap): bool
+    {
+        if ($sitemap) {
+            try {
+                return $this->database->delete($sitemap->getID());
+            } catch (Exception $exception) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

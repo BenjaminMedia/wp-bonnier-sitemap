@@ -56,6 +56,21 @@ add_filter('post_tag_minimum_count', function (int $count) {
 
 ---
 
+**WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT = 'user_minimum_count'**
+
+This filter will allow you to define the minimum number of posts a user needs to be attached to, for it to be included in a sitemap.
+
+Default: 5
+
+```php
+add_filter('user_minimum_count', function (int $count) {
+    // For SEO purposes, our sitemap cannot have less than 10 posts for user pages.
+    return 10;
+}, 10);
+``` 
+
+---
+
 **WpBonnierSitemap::FILTER_POST_PERMALINK = 'sitemap_post_permalink'**
 
 This filter will allow you to alter the generated permalink for a post being saved.
@@ -89,3 +104,15 @@ add_filter('sitemap_tag_permalink', function (string $permalink, \WP_Term $tag) 
     return $permalink;
 }, 10, 2);
 ```
+
+---
+
+**WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap'**
+
+This filter will allow you to apply your own rules for registering the user in the sitemap table.
+
+```php
+add_filter('allow_user_in_sitemap', function (bool $allowInSitemap, int $userID, \WP_User $user) {
+    return $allowInSitemap;
+}, 10, 3);
+``` 

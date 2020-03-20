@@ -7,9 +7,12 @@ use Bonnier\WP\Sitemap\Observers\Dependents\CategorySlugChangeObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\PostChangeObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\TagDeleteObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\TagSlugChangeObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\UserDeleteObserver;
+use Bonnier\WP\Sitemap\Observers\Dependents\UserUpdateObserver;
 use Bonnier\WP\Sitemap\Observers\Subjects\CategorySubject;
 use Bonnier\WP\Sitemap\Observers\Subjects\PostSubject;
 use Bonnier\WP\Sitemap\Observers\Subjects\TagSubject;
+use Bonnier\WP\Sitemap\Observers\Subjects\UserSubject;
 use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 
 class Observers
@@ -28,6 +31,8 @@ class Observers
         self::bootstrapPostSubject();
 
         self::bootstrapTagSubject();
+
+        self::bootstrapUserSubject();
     }
 
     public static function bootstrapCategorySubject()
@@ -54,5 +59,15 @@ class Observers
         $tagSubject = new TagSubject();
         $tagSubject->attach($slugChangeObserver);
         $tagSubject->attach($deleteObserver);
+    }
+
+    public static function bootstrapUserSubject()
+    {
+        $userUpdateObserver = new UserUpdateObserver(self::$sitemapRepository);
+        $userDeleteObserver = new UserDeleteObserver(self::$sitemapRepository);
+
+        $userSubject = new UserSubject();
+        $userSubject->attach($userUpdateObserver);
+        $userSubject->attach($userDeleteObserver);
     }
 }

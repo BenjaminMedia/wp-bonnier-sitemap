@@ -43,6 +43,11 @@ class TestCase extends WPTestCase
         return $this->factory()->tag->create_and_get($args);
     }
 
+    protected function getUser(array $args = []): \WP_User
+    {
+        return $this->factory()->user->create_and_get($args);
+    }
+
     protected function assertSitemapEntryMatchesPost(Sitemap $sitemap, \WP_Post $post)
     {
         $this->assertEquals($post->ID, $sitemap->getWpID());
@@ -65,5 +70,13 @@ class TestCase extends WPTestCase
         $this->assertEquals(get_tag_link($tag), $sitemap->getUrl());
         $this->assertEquals($tag->taxonomy, $sitemap->getWpType());
         $this->assertEquals(LocaleHelper::getTermLocale($tag->term_id), $sitemap->getLocale());
+    }
+
+    protected function assertSitemapEntryMatchesUser(Sitemap $sitemap, \WP_User $user)
+    {
+        $this->assertEquals($user->ID, $sitemap->getWpID());
+        $this->assertEquals(get_author_posts_url($user->ID), $sitemap->getUrl());
+        $this->assertEquals('user', $sitemap->getWpType());
+        $this->assertEquals(LocaleHelper::getLanguages()[0], $sitemap->getLocale());
     }
 }
