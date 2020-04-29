@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Tests\integration\Observers\Category;
 
+use Bonnier\WP\Sitemap\Models\Sitemap;
 use Bonnier\WP\Sitemap\Tests\integration\Observers\ObserverTestCase;
 
 class CategorySlugChangesTest extends ObserverTestCase
@@ -12,16 +13,20 @@ class CategorySlugChangesTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        $this->assertSitemapEntryMatchesCategory($sitemaps->first(), $category);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesCategory($sitemaps->first(function (Sitemap $sitemap) use ($category) {
+            return $sitemap->getWpType() === $category->taxonomy;
+        }), $category);
 
         wp_update_category(['cat_ID' => $category->term_id, 'category_nicename' => 'new-category-slug']);
         $updatedCategory = get_term($category->term_id);
 
         $newSitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        $this->assertSitemapEntryMatchesCategory($newSitemaps->first(), $updatedCategory);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesCategory($newSitemaps->first(function (Sitemap $sitemap) use ($updatedCategory) {
+            return $sitemap->getWpType() === $updatedCategory->taxonomy;
+        }), $updatedCategory);
     }
 
     public function testChangingParentCategoryUpdatesSitemapEntryForChildAlso()
@@ -31,9 +36,13 @@ class CategorySlugChangesTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(2, $sitemaps);
-        $this->assertSitemapEntryMatchesCategory($sitemaps->first(), $parent);
-        $this->assertSitemapEntryMatchesCategory($sitemaps->last(), $child);
+        $this->assertCount(4, $sitemaps);
+        $this->assertSitemapEntryMatchesCategory($sitemaps->first(function (Sitemap $sitemap) use ($parent) {
+            return $sitemap->getWpType() === $parent->taxonomy && $sitemap->getWpID() === $parent->term_id;
+        }), $parent);
+        $this->assertSitemapEntryMatchesCategory($sitemaps->first(function (Sitemap $sitemap) use ($child) {
+            return $sitemap->getWpType() === $child->taxonomy && $sitemap->getWpID() === $child->term_id;
+        }), $child);
 
         wp_update_category(['cat_ID' => $parent->term_id, 'category_nicename' => 'new-parent-slug']);
         $updatedParent = get_term($parent->term_id);
@@ -41,8 +50,12 @@ class CategorySlugChangesTest extends ObserverTestCase
 
         $newSitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($newSitemaps);
-        $this->assertCount(2, $newSitemaps);
-        $this->assertSitemapEntryMatchesCategory($newSitemaps->first(), $updatedParent);
-        $this->assertSitemapEntryMatchesCategory($newSitemaps->last(), $updatedChild);
+        $this->assertCount(4, $newSitemaps);
+        $this->assertSitemapEntryMatchesCategory($newSitemaps->first(function (Sitemap $sitemap) use ($updatedParent) {
+            return $sitemap->getWpType() === $updatedParent->taxonomy && $sitemap->getWpID() === $updatedParent->term_id;
+        }), $updatedParent);
+        $this->assertSitemapEntryMatchesCategory($newSitemaps->first(function (Sitemap $sitemap) use ($updatedChild) {
+            return $sitemap->getWpType() === $updatedChild->taxonomy && $sitemap->getWpID() === $updatedChild->term_id;
+        }), $updatedChild);
     }
 }

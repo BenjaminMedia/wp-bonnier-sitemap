@@ -38,7 +38,9 @@ class CategorySlugChangeObserver implements ObserverInterface
         if ($existingEntry && $existingEntry->getUrl() === get_term_link($category->term_id, $category->taxonomy)) {
             return; // Slug has not changed since last entry no further processing needed
         }
-        $this->sitemapRepository->insertOrUpdateCategory($category);
+        if ($category->count) {
+            $this->sitemapRepository->insertOrUpdateCategory($category);
+        }
 
         $this->updateChildren($category);
         $this->updatePosts($category);

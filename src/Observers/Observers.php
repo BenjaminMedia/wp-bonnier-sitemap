@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Observers;
 
+use Bonnier\WP\Sitemap\Observers\Dependents\CategoryCountObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\CategoryDeleteObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\CategorySlugChangeObserver;
 use Bonnier\WP\Sitemap\Observers\Dependents\PostChangeObserver;
@@ -39,10 +40,12 @@ class Observers
     {
         $slugChangeObserver = new CategorySlugChangeObserver(self::$sitemapRepository);
         $deleteObserver = new CategoryDeleteObserver(self::$sitemapRepository);
+        $countObserver = new CategoryCountObserver(self::$sitemapRepository);
 
         $categorySubject = new CategorySubject();
         $categorySubject->attach($slugChangeObserver);
         $categorySubject->attach($deleteObserver);
+        $categorySubject->attach($countObserver);
     }
 
     public static function bootstrapPostSubject()

@@ -31,7 +31,7 @@ class PostChangeObserver implements ObserverInterface
                 $post->post_status === 'publish' &&
                 apply_filters(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, true, $post)
             ) {
-                $this->sitemapRepository->insertOrUpdatePost($subject->getPost());
+                $this->sitemapRepository->insertOrUpdatePost($post);
             } else {
                 $this->sitemapRepository->deleteByPost($post);
             }
