@@ -42,10 +42,7 @@ class PostStatusChangesTest extends ObserverTestCase
         $this->updatePost($post->ID, [
             'post_status' => 'draft'
         ]);
-        $updatedSitemaps = $this->sitemapRepository->all();
-        $this->assertNull($updatedSitemaps->first(function (Sitemap $sitemap) use ($post) {
-            return $sitemap->getWpType() === $post->post_type;
-        }));
+        $this->assertNull($this->sitemapRepository->all());
     }
 
     public function testSitemapEntryRemovedWhenPostIsDeleted()
@@ -62,9 +59,6 @@ class PostStatusChangesTest extends ObserverTestCase
         $this->updatePost($post->ID, [
             'post_status' => 'trash'
         ]);
-        $updatedSitemaps = $this->sitemapRepository->all();
-        $this->assertNull($updatedSitemaps->first(function (Sitemap $sitemap) use ($post) {
-            return $sitemap->getWpType() === $post->post_type;
-        }));
+        $this->assertNull($this->sitemapRepository->all());
     }
 }

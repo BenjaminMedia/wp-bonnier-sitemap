@@ -9,25 +9,14 @@ class CategoryStatusChangesTest extends ObserverTestCase
 {
     public function testCategoryCreationMakesSitemapEntry()
     {
-        $category = $this->getCategory([], false);
-
+        $category = $this->getCategory();
         $sitemaps = $this->sitemapRepository->all();
-        $this->assertNull($sitemaps);
-
-        $post = $this->getPost([
-            'post_category' => [$category->term_id]
-        ]);
-        $updatedSitemaps = $this->sitemapRepository->all();
-        $this->assertNotNull($updatedSitemaps);
-        $this->assertCount(2, $updatedSitemaps);
-        $categoryEntry = $updatedSitemaps->first(function (Sitemap $sitemap) use ($category) {
+        $this->assertNotNull($sitemaps);
+        $this->assertCount(2, $sitemaps);
+        $categoryEntry = $sitemaps->first(function (Sitemap $sitemap) use ($category) {
             return $sitemap->getWpType() === $category->taxonomy;
         });
-        $postEntry = $updatedSitemaps->first(function (Sitemap $sitemap) use ($post) {
-            return $sitemap->getWpType() === $post->post_type;
-        });
         $this->assertSitemapEntryMatchesCategory($categoryEntry, $category);
-        $this->assertSitemapEntryMatchesPost($postEntry, $post);
     }
 
     public function testPostRemovedFromCategoryRemovesCategoryFromSitemap()
