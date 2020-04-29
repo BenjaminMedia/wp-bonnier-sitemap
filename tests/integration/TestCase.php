@@ -33,9 +33,13 @@ class TestCase extends WPTestCase
         return $this->factory()->post->create_and_get($args);
     }
 
-    protected function getCategory(array $args = []): \WP_Term
+    protected function getCategory(array $args = [], bool $withPost = true): \WP_Term
     {
-        return $this->factory()->category->create_and_get($args);
+        $category = $this->factory()->category->create_and_get($args);
+        if ($withPost) {
+            $this->getPost(['post_category' => [$category->term_id]]);
+        }
+        return $category;
     }
 
     protected function getTag(array $args = []): \WP_Term

@@ -9,6 +9,7 @@ class CategorySubject extends AbstractSubject
 {
     public const UPDATE = 'update';
     public const DELETE = 'delete';
+    public const COUNT = 'count';
 
     /** @var \WP_Term|null */
     private $category;
@@ -30,6 +31,7 @@ class CategorySubject extends AbstractSubject
         add_action('edited_category', [$this, 'updateCategory']);
         add_action('pre_delete_term', [$this, 'preDeleteCategory'], 0, 2);
         add_action('delete_category', [$this, 'deletedCategory'], 10, 4);
+        add_action('set_object_terms', [$this, 'updateCount'], 10, 6);
     }
 
     /**
@@ -121,5 +123,25 @@ class CategorySubject extends AbstractSubject
         $this->category = $category;
         $this->type = self::DELETE;
         $this->notify();
+    }
+
+    public function updateCount(int $objectID, array $terms, array $termTaxonomyIDs, string $taxonomy, bool $append, array $oldTermTaxonomyIDs)
+    {
+        if ($taxonomy === 'category') {
+            foreach ($terms as $termID) {
+                if (($category = get_category($termID)) && $category instanceof \WP_Term) {
+                    $this->category = $category;
+                    $this->type = self::COUNT;
+                    $this->notify();
+                }
+            }
+            foreach ($oldTermTaxonomyIDs as $termID) {
+                if (($category = get_category($termID)) && $category instanceof \WP_Term) {
+                    $this->category = $category;
+                    $this->type = self::COUNT;
+                    $this->notify();
+                }
+            }
+        }
     }
 }

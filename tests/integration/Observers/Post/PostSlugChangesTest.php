@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Tests\integration\Observers\Post;
 
+use Bonnier\WP\Sitemap\Models\Sitemap;
 use Bonnier\WP\Sitemap\Tests\integration\Observers\ObserverTestCase;
 
 class PostSlugChangesTest extends ObserverTestCase
@@ -13,8 +14,10 @@ class PostSlugChangesTest extends ObserverTestCase
 
         $originalSitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($originalSitemaps);
-        $this->assertCount(1, $originalSitemaps);
-        $originalSitemap = $originalSitemaps->first();
+        $this->assertCount(2, $originalSitemaps);
+        $originalSitemap = $originalSitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        });
         $this->assertEquals($originalPermalink, $originalSitemap->getUrl());
 
         $this->updatePost($post->ID, [
@@ -24,8 +27,10 @@ class PostSlugChangesTest extends ObserverTestCase
 
         $newSitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($newSitemaps);
-        $this->assertCount(1, $newSitemaps);
-        $newSitemap = $newSitemaps->first();
+        $this->assertCount(2, $newSitemaps);
+        $newSitemap = $newSitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        });
         $this->assertSitemapEntryMatchesPost($newSitemap, $updatedPost);
     }
 }

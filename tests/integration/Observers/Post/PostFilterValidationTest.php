@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Tests\integration\Observers\Post;
 
+use Bonnier\WP\Sitemap\Models\Sitemap;
 use Bonnier\WP\Sitemap\Tests\integration\Observers\ObserverTestCase;
 use Bonnier\WP\Sitemap\WpBonnierSitemap;
 
@@ -11,9 +12,11 @@ class PostFilterValidationTest extends ObserverTestCase
     {
         add_filter(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, [$this, 'disallowPostFilter'], 10, 2);
 
-        $this->getPost();
+        $post = $this->getPost();
 
-        $this->assertNull($this->sitemapRepository->all());
+        $this->assertNull($this->sitemapRepository->all()->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }));
 
         remove_filter(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, [$this, 'disallowPostFilter'], 10);
     }
@@ -24,14 +27,18 @@ class PostFilterValidationTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        $this->assertSitemapEntryMatchesPost($sitemaps->first(), $post);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesPost($sitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }), $post);
 
         add_filter(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, [$this, 'disallowPostFilter'], 10, 2);
 
         $this->updatePost($post->ID, ['post_name' => 'hidden-from-sitemap']);
 
-        $this->assertNull($this->sitemapRepository->all());
+        $this->assertNull($this->sitemapRepository->all()->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }));
         remove_filter(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, [$this, 'disallowPostFilter'], 10);
     }
 
@@ -57,7 +64,7 @@ class PostFilterValidationTest extends ObserverTestCase
         remove_filter(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, [$this, 'disallowPostFilter'], 10);
     }
 
-    public function disallowPostFilter(bool $allowed, \WP_Post$post)
+    public function disallowPostFilter(bool $allowed, \WP_Post $post)
     {
         $this->assertIsBool($allowed);
         $this->assertInstanceOf(\WP_Post::class, $post);

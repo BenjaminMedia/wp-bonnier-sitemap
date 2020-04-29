@@ -13,10 +13,10 @@ class PostStatusChangesTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        /** @var Sitemap $sitemap */
-        $sitemap = $sitemaps->first();
-        $this->assertSitemapEntryMatchesPost($sitemap, $post);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesPost($sitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }), $post);
     }
 
     public function testSitemapEntryNotCreatedForDrafts()
@@ -34,16 +34,18 @@ class PostStatusChangesTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        /** @var Sitemap $sitemap */
-        $sitemap = $sitemaps->first();
-        $this->assertSitemapEntryMatchesPost($sitemap, $post);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesPost($sitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }), $post);
 
         $this->updatePost($post->ID, [
             'post_status' => 'draft'
         ]);
         $updatedSitemaps = $this->sitemapRepository->all();
-        $this->assertNull($updatedSitemaps);
+        $this->assertNull($updatedSitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }));
     }
 
     public function testSitemapEntryRemovedWhenPostIsDeleted()
@@ -52,14 +54,17 @@ class PostStatusChangesTest extends ObserverTestCase
 
         $sitemaps = $this->sitemapRepository->all();
         $this->assertNotNull($sitemaps);
-        $this->assertCount(1, $sitemaps);
-        $sitemap = $sitemaps->first();
-        $this->assertSitemapEntryMatchesPost($sitemap, $post);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesPost($sitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }), $post);
 
         $this->updatePost($post->ID, [
             'post_status' => 'trash'
         ]);
         $updatedSitemaps = $this->sitemapRepository->all();
-        $this->assertNull($updatedSitemaps);
+        $this->assertNull($updatedSitemaps->first(function (Sitemap $sitemap) use ($post) {
+            return $sitemap->getWpType() === $post->post_type;
+        }));
     }
 }
