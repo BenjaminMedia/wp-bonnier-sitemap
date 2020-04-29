@@ -37,4 +37,31 @@ class CategoryCountChangesTest extends ObserverTestCase
         ]);
         $this->assertNull($this->sitemapRepository->all());
     }
+
+    public function testPublishingDraftAddsCategoryToSitemap()
+    {
+        $category = $this->getCategory([], false);
+        $post = $this->getPost([
+            'post_status' => 'draft',
+            'post_category' => [$category->term_id]
+        ]);
+
+        $this->assertNull($this->sitemapRepository->all());
+
+        $this->updatePost($post->ID, [
+            'post_status' => 'publish'
+        ]);
+
+        $updatedPost = get_post($post->ID);
+
+        $sitemaps = $this->sitemapRepository->all();
+        $this->assertNotNull($sitemaps);
+        $this->assertCount(2, $sitemaps);
+        $this->assertSitemapEntryMatchesCategory($sitemaps->first(function (Sitemap $sitemap) use ($category) {
+            return $sitemap->getWpType() === $category->taxonomy;
+        }), $category);
+        $this->assertSitemapEntryMatchesPost($sitemaps->first(function (Sitemap $sitemap) use ($updatedPost) {
+            return $sitemap->getWpType() === $updatedPost->post_type;
+        }), $updatedPost);
+    }
 }
