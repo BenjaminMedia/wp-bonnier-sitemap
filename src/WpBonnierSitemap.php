@@ -17,6 +17,7 @@ class WpBonnierSitemap
     public const FILTER_POST_PERMALINK = 'sitemap_post_permalink';
     public const FILTER_CATEGORY_PERMALINK = 'sitemap_category_permalink';
     public const FILTER_TAG_PERMALINK = 'sitemap_tag_permalink';
+    public const FILTER_TAG_ALLOWED_IN_SITEMAP = 'tag_allowed_in_sitemap';
     public const FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap';
 
     private static $instance;

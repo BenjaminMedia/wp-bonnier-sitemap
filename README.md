@@ -107,6 +107,23 @@ add_filter('sitemap_tag_permalink', function (string $permalink, \WP_Term $tag) 
 
 ---
 
+**WpBonnierSitemap::FILTER_TAG_ALLOWED_IN_SITEMAP = 'tag_allowed_in_sitemap'**
+
+This filter will allow you to hijack the validation for whether a WP_Term is supposed to be in the sitemap.
+
+Default: true
+
+```php
+add_filter('tag_allowed_in_sitemap', function (bool $allowed, \WP_Term $tag) {
+    if ($tag->taxonomy !== 'post_tag') {
+            $allowed = false;
+        }
+        return $allowed;
+}, 10, 2);
+```
+
+---
+
 **WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap'**
 
 This filter will allow you to apply your own rules for registering the user in the sitemap table.

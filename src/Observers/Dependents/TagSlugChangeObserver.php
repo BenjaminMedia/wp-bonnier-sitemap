@@ -7,6 +7,7 @@ use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
 use Bonnier\WP\Sitemap\Observers\Interfaces\ObserverInterface;
 use Bonnier\WP\Sitemap\Observers\Interfaces\SubjectInterface;
 use Bonnier\WP\Sitemap\Observers\Subjects\TagSubject;
+use Bonnier\WP\Sitemap\WpBonnierSitemap;
 
 class TagSlugChangeObserver implements ObserverInterface
 {
@@ -30,7 +31,10 @@ class TagSlugChangeObserver implements ObserverInterface
         if (!$tag) {
             return;
         }
-        if ($tag->count < Utils::getPostTagMinimumCount()) {
+        if (
+            !apply_filters(WpBonnierSitemap::FILTER_TAG_ALLOWED_IN_SITEMAP, true, $tag) ||
+            $tag->count < Utils::getPostTagMinimumCount()
+        ) {
             $this->sitemapRepository->deleteByTerm($tag);
             return;
         }
