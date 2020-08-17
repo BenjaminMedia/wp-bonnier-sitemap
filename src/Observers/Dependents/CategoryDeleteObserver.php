@@ -38,8 +38,9 @@ class CategoryDeleteObserver implements ObserverInterface
 
         if (!empty($postIDs = $subject->getAffectedPosts())) {
             foreach ($postIDs as $postID) {
-                $post = get_post($postID);
-                do_action('save_post', $post->ID, $post, true);
+                if ($post = get_post($postID)) {
+                    do_action('save_post', $post->ID, $post, true);
+                }
             }
         }
     }
