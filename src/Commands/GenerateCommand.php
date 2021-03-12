@@ -11,11 +11,20 @@ class GenerateCommand extends \WP_CLI_Command
     /**
      * Generate sitemaps
      *
+     * ## OPTIONS
+     *
+     * [--host=<host>]
+     * : Set host name for proper loading of envs
+     *
      * ## EXAMPLES
      *     wp bonnier sitemap generate sitemaps
      */
-    public function sitemaps()
+    public function sitemaps($args, $assocArgs)
     {
+        if (isset($assocArgs['host'])) {
+            $_SERVER['HOST_NAME'] = $assocArgs['host'];
+        }
+
         $start = microtime(true);
         $postTypes = Utils::getValidPostTypes();
         foreach ($postTypes as $postType) {
