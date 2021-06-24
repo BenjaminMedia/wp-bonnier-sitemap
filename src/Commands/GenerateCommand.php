@@ -76,9 +76,9 @@ class GenerateCommand extends \WP_CLI_Command
             'offset' => $tagOffset
         ])) {
             foreach ($tags as $tag) {
-                if ($this->findCategoryByTag($tag)) {
+                if ($this->findCategoryByTag($tag) || $tag->count < $minTagCount) {
                     WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
-                } else if ($tag->count >= $minTagCount) {
+                } else {
                     WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateTag($tag);
                 }
                 $tagProgress->tick();
