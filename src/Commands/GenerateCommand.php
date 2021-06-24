@@ -34,7 +34,7 @@ class GenerateCommand extends \WP_CLI_Command
             while ($posts = get_posts([
                 'numberposts' => 100,
                 'post_type' => $postType,
-                'offset' =>  $postOffset,
+                'offset' => $postOffset,
                 'post_status' => 'publish',
             ])) {
                 foreach ($posts as $post) {
@@ -76,7 +76,9 @@ class GenerateCommand extends \WP_CLI_Command
             'offset' => $tagOffset
         ])) {
             foreach ($tags as $tag) {
-                if ($tag->count >= $minTagCount) {
+                if ($this->findCategoryByTag($tag)) {
+                    WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
+                } else if ($tag->count >= $minTagCount) {
                     WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateTag($tag);
                 }
                 $tagProgress->tick();
@@ -85,5 +87,18 @@ class GenerateCommand extends \WP_CLI_Command
         }
         $tagProgress->finish();
         \WP_CLI::success(sprintf('Done in %.2f seconds', microtime(true) - $start));
+    }
+
+    private function findCategoryByTag($tag)
+    {
+        $categories = get_categories([
+            'slug' => $tag->slug,
+        ]);
+        foreach ($categories as $category) {
+            if (pll_get_term_language($category->term_id) === pll_get_term_language($tag->term_id)) {
+                return $category;
+            }
+        }
+        return null;
     }
 }

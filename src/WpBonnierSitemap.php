@@ -1,104 +1,88 @@
 <?php
 
-namespace Bonnier\WP\Sitemap\Commands;
+namespace Bonnier\WP\Sitemap;
 
-use Bonnier\WP\Sitemap\Helpers\Utils;
-use Bonnier\WP\Sitemap\WpBonnierSitemap;
-use function WP_CLI\Utils\make_progress_bar;
+use Bonnier\WP\Sitemap\Observers\Observers;
+use Bonnier\WP\Sitemap\Repositories\SitemapRepository;
+use Bonnier\WP\Sitemap\Commands\Commands;
+use Bonnier\WP\Sitemap\Database\DB;
+use Bonnier\WP\Sitemap\Database\Migrations\Migrate;
 
-class GenerateCommand extends \WP_CLI_Command
+class WpBonnierSitemap
 {
-    /**
-     * Generate sitemaps
-     *
-     * ## OPTIONS
-     *
-     * [--host=<host>]
-     * : Set host name for proper loading of envs
-     *
-     * ## EXAMPLES
-     *     wp bonnier sitemap generate sitemaps
-     */
-    public function sitemaps($args, $assocArgs)
+    public const FILTER_ALLOWED_POST_TYPES = 'sitemap_allowed_post_types';
+    public const FILTER_POST_ALLOWED_IN_SITEMAP = 'post_allowed_in_sitemap';
+    public const FILTER_POST_TAG_MINIMUM_COUNT = 'post_tag_minimum_count';
+    public const FILTER_USER_MINIMUM_COUNT = 'user_minimum_count';
+    public const FILTER_POST_PERMALINK = 'sitemap_post_permalink';
+    public const FILTER_CATEGORY_PERMALINK = 'sitemap_category_permalink';
+    public const FILTER_TAG_PERMALINK = 'sitemap_tag_permalink';
+    public const FILTER_TAG_ALLOWED_IN_SITEMAP = 'tag_allowed_in_sitemap';
+    public const FILTER_ALLOW_USER_IN_SITEMAP = 'allow_user_in_sitemap';
+
+    private static $instance;
+
+    private $dir;
+
+    private $basename;
+
+    private $pluginDir;
+
+    private $pluginUrl;
+
+    private $sitemapRepository;
+
+    public function __construct()
     {
-        if (isset($assocArgs['host'])) {
-            $_SERVER['HOST_NAME'] = $assocArgs['host'];
+        add_option(Migrate::OPTION);
+        Migrate::run();
+        // Set plugin file variables
+        $this->dir = __DIR__;
+        $this->basename = plugin_basename($this->dir);
+        $this->pluginDir = plugin_dir_path($this->dir);
+        $this->pluginUrl = plugin_dir_url($this->dir);
+
+        try {
+            $this->sitemapRepository = new SitemapRepository(new DB());
+        } catch (\Exception $exception) {
+            wp_die($exception->getMessage());
         }
 
-        $start = microtime(true);
-        $postTypes = Utils::getValidPostTypes();
-        foreach ($postTypes as $postType) {
-            $postCount = wp_count_posts($postType)->publish;
-            $postProgress = make_progress_bar(sprintf('Generating %s sitemap entries for %s...', number_format($postCount), $postType), $postCount);
-            $postOffset = 0;
-            while ($posts = get_posts([
-                'numberposts' => 100,
-                'post_type' => $postType,
-                'offset' => $postOffset,
-                'post_status' => 'publish',
-            ])) {
-                foreach ($posts as $post) {
-                    if (apply_filters(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, true, $post)) {
-                        WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdatePost($post);
-                    } else {
-                        WpBonnierSitemap::instance()->getSitemapRepository()->deleteByPost($post);
-                    }
-                    $postProgress->tick();
-                }
-                $postOffset += 100;
-            }
-            $postProgress->finish();
-        }
+        add_filter(self::FILTER_ALLOW_USER_IN_SITEMAP, function (bool $allowInSitemap) {
+            return $allowInSitemap;
+        });
 
-        $categoryCount = wp_count_terms('category');
-        $categoryProgress = make_progress_bar(sprintf('Generating %s sitemap entries for categories...', number_format($categoryCount)), $categoryCount);
-        $catOffset = 0;
-        while ($categories = get_categories([
-            'hide_empty' => false,
-            'number' => 100,
-            'offset' => $catOffset
-        ])) {
-            foreach ($categories as $category) {
-                WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateCategory($category);
-                $categoryProgress->tick();
-            }
-            $catOffset += 100;
-        }
-        $categoryProgress->finish();
+        Observers::bootstrap($this->sitemapRepository);
+        Commands::register();
 
-        $minTagCount = Utils::getPostTagMinimumCount();
-        $tagCount = wp_count_terms('post_tag');
-        $tagProgress = make_progress_bar(sprintf('Generating %s sitemap entries for tags...', number_format($tagCount)), $tagCount);
-        $tagOffset = 0;
-        while ($tags = get_tags([
-            'hide_empty' => false,
-            'number' => 100,
-            'offset' => $tagOffset
-        ])) {
-            foreach ($tags as $tag) {
-                if ($this->findCategoryByTag($tag)) {
-                    WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
-                } else if ($tag->count >= $minTagCount) {
-                    WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateTag($tag);
-                }
-                $tagProgress->tick();
-            }
-            $tagOffset += 100;
-        }
-        $tagProgress->finish();
-        \WP_CLI::success(sprintf('Done in %.2f seconds', microtime(true) - $start));
     }
 
-    private function findCategoryByTag($tag)
+    /**
+     * Returns the instance of this class.
+     */
+    public static function instance()
     {
-        $categories = get_categories([
-            'slug' => $tag->slug,
-        ]);
-        foreach ($categories as $category) {
-            if (pll_get_term_language($category->term_id) === pll_get_term_language($tag->term_id)) {
-                return $category;
-            }
+        if (!self::$instance) {
+            self::$instance = new self();
+            /**
+             * Run after the plugin has been loaded.
+             */
+            do_action('wp_bonnier_sitemap_loaded');
         }
-        return null;
+
+        return self::$instance;
+    }
+
+    public static function boot()
+    {
+        self::$instance = new self();
+    }
+
+    /**
+     * @return SitemapRepository
+     */
+    public function getSitemapRepository()
+    {
+        return $this->sitemapRepository;
     }
 }
