@@ -76,7 +76,9 @@ class GenerateCommand extends \WP_CLI_Command
             'offset' => $tagOffset
         ])) {
             foreach ($tags as $tag) {
-                if ($this->findCategoryByTag($tag) || $tag->count < $minTagCount) {
+                if (!apply_filters(WpBonnierSitemap::FILTER_TAG_ALLOWED_IN_SITEMAP, true, $tag)) {
+                    WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
+                } else if ($this->findCategoryByTag($tag) || $tag->count < $minTagCount) {
                     WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
                 } else {
                     WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateTag($tag);
