@@ -78,7 +78,7 @@ class GenerateCommand extends \WP_CLI_Command
             foreach ($tags as $tag) {
                 if (!apply_filters(WpBonnierSitemap::FILTER_TAG_ALLOWED_IN_SITEMAP, true, $tag)) {
                     WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
-                } else if ($this->findCategoryByTag($tag) || $tag->count < $minTagCount) {
+                } else if ($this->findCategoryByTag($tag) || $tag->count <= $minTagCount) {
                     WpBonnierSitemap::instance()->getSitemapRepository()->deleteByTerm($tag);
                 } else {
                     WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateTag($tag);
@@ -95,6 +95,7 @@ class GenerateCommand extends \WP_CLI_Command
     {
         $categories = get_categories([
             'slug' => $tag->slug,
+            'hide_empty' => 0,
         ]);
         foreach ($categories as $category) {
             if (pll_get_term_language($category->term_id) === pll_get_term_language($tag->term_id)) {
