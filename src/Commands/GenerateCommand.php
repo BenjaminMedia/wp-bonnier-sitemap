@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\Sitemap\Commands;
 
+use Bonnier\WP\Sitemap\Helpers\LocaleHelper;
 use Bonnier\WP\Sitemap\Helpers\Utils;
 use Bonnier\WP\Sitemap\WpBonnierSitemap;
 use function WP_CLI\Utils\make_progress_bar;
@@ -26,6 +27,9 @@ class GenerateCommand extends \WP_CLI_Command
         }
 
         $start = microtime(true);
+
+        $this->truncate(); //truncate database before generating a new sitemap.
+
         $postTypes = Utils::getValidPostTypes();
         foreach ($postTypes as $postType) {
             $postCount = wp_count_posts($postType)->publish;
@@ -88,6 +92,40 @@ class GenerateCommand extends \WP_CLI_Command
             $tagOffset += 100;
         }
         $tagProgress->finish();
+
+        $minAuthorPosts = Utils::getUserMinimumCount();
+        $authors = get_users([
+            'hide_empty' => false,
+            'html' => false,
+        ]);
+        $authorsCount = count($authors);
+        $authorsProgress = make_progress_bar(sprintf('Generating %s sitemap entries for authors...', number_format($authorsCount)), $authorsCount);
+        foreach ($authors as $author) {
+            $hasAuthorRole = in_array('author', $author->roles);
+            if ($hasAuthorRole) {
+                $allowInSitemap = apply_filters(WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP, true, $author->ID, $author);
+                foreach (LocaleHelper::getLanguages() as $locale) {
+                    $countUserPosts = Utils::countUserPosts($author, $locale);
+                    if ($allowInSitemap && $countUserPosts >= $minAuthorPosts) {
+                        WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateUser($author, $locale);
+                    } else {
+                        WpBonnierSitemap::instance()->getSitemapRepository()->deleteByUser($author, $locale);
+                    }
+                }
+            }
+            $authorsProgress->tick();
+        }
+        $authorsProgress->finish();
+
+        \WP_CLI::success(sprintf('Done in %.2f seconds', microtime(true) - $start));
+    }
+
+    private function truncate()
+    {
+        global $wpdb;
+        $start = microtime(true);
+        $table  = $wpdb->prefix . 'bonnier_sitemap';
+        $delete = $wpdb->query("TRUNCATE TABLE $table");
         \WP_CLI::success(sprintf('Done in %.2f seconds', microtime(true) - $start));
     }
 
