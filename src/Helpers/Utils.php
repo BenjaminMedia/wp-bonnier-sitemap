@@ -16,12 +16,12 @@ class Utils
 
     public static function getPostTagMinimumCount()
     {
-        return apply_filters(WpBonnierSitemap::FILTER_POST_TAG_MINIMUM_COUNT, 5);
+        return apply_filters(WpBonnierSitemap::FILTER_POST_TAG_MINIMUM_COUNT, 6);
     }
 
     public static function getUserMinimumCount()
     {
-        return apply_filters(WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT, 5);
+        return apply_filters(WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT, 6);
     }
 
     public static function countUserPosts(\WP_User $user, string $locale)
