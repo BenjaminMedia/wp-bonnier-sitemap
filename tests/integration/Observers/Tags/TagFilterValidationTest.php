@@ -11,11 +11,11 @@ class TagFilterValidationTest extends TagObserverTestCase
     {
         add_filter(WpBonnierSitemap::FILTER_TAG_ALLOWED_IN_SITEMAP, [$this, 'disallowTagFilter'], 10, 2);
 
-        $posts = collect(array_fill(0, 5, ''))->map(function () {
+        $posts = collect(array_fill(0, $this->minPostInTag, ''))->map(function () {
             return $this->getPost();
         });
         $tag = $this->getTag([], $posts);
-        $this->assertEquals(5, $tag->count);
+        $this->assertEquals($this->minPostInTag, $tag->count);
 
         $this->assertNull($this->sitemapRepository->all()->first(function (Sitemap $sitemap) use ($tag) {
             return $sitemap->getWpType() === $tag->taxonomy;

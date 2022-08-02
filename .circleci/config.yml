@@ -8,7 +8,7 @@ jobs:
           - DB_USER=homestead
           - DB_PASSWORD=secret
           - DB_NAME=wp_test
-          - DB_HOST=127.0.0.1
+          - DB_HOST=192.168.56.56
       - image: circleci/mysql:5.7.18
         environment:
           - MYSQL_ROOT_PASSWORD=secret
@@ -24,16 +24,24 @@ jobs:
       - run:
          name: Install PHP Modules
          command: sudo -E docker-php-ext-install zip pdo mysqli pdo_mysql gd
-      - restore_cache:
-          keys:
-            - composer-v1-{{ checksum "composer.lock" }}
-            - composer-v1-
-      - run: composer install -n --prefer-dist
-      - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
-          paths:
-            - vendor
-            - web/wp
+         
+      - run: sudo composer self-update --1   
+      
+      - run: composer clearcache
+      - run: composer config --global --auth http-basic.repo.packagist.com interactive 74ca79b1f66c8b04539f247c3b00c85839550ca24ba0f6517d29d7ae34f6
+      - run: php -d memory_limit=4096M /usr/local/bin/composer update
+      
+      # - restore_cache:
+      #     keys:
+      #       - composer-v1-{{ checksum "composer.lock" }}
+      #       - composer-v1-
+
+     #  - save_cache:
+     #      key: composer-v1-{{ checksum "composer.lock" }}
+     #      paths:
+     #        - vendor
+     #        - web/wp
+    
       - run:
           name: Run Unit Tests
           command: composer unit

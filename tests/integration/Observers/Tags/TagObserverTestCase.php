@@ -7,11 +7,13 @@ use Illuminate\Support\Collection;
 
 class TagObserverTestCase extends ObserverTestCase
 {
+    protected $minPostInTag = 6;
+
     protected function getTag(array $args = [], ?Collection $posts = null): \WP_Term
     {
         $tag = parent::getTag($args);
         if (!$posts) {
-            $posts = collect(array_fill(0, 5, ''))->map(function () {
+            $posts = collect(array_fill(0, $this->minPostInTag, ''))->map(function () {
                 return $this->getPost();
             });
         }
