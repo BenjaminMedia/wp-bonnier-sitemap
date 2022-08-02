@@ -40,6 +40,8 @@ class GenerateCommand extends \WP_CLI_Command
                 'post_type' => $postType,
                 'offset' => $postOffset,
                 'post_status' => 'publish',
+                'orderby' => 'ID',
+                'order' => 'ASC'
             ])) {
                 foreach ($posts as $post) {
                     if (apply_filters(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, true, $post)) {
