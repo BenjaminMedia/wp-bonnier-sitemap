@@ -8,7 +8,7 @@ jobs:
           - DB_USER=homestead
           - DB_PASSWORD=secret
           - DB_NAME=wp_test
-          - DB_HOST=127.0.0.1
+          - DB_HOST=192.168.56.56
       - image: circleci/mysql:5.7.18
         environment:
           - MYSQL_ROOT_PASSWORD=secret

@@ -21,7 +21,7 @@ class Utils
 
     public static function getUserMinimumCount()
     {
-        return apply_filters(WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT, 6);
+        return apply_filters(WpBonnierSitemap::FILTER_USER_MINIMUM_COUNT, 5);
     }
 
     public static function countUserPosts(\WP_User $user, string $locale)
