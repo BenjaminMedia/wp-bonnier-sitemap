@@ -31,6 +31,36 @@ class GenerateCommand extends \WP_CLI_Command
         $this->truncate(); //truncate database before generating a new sitemap.
 
         $postTypes = Utils::getValidPostTypes();
+
+
+
+        // start <code for test if cronjob is working well(we can delete these codes when ever we want)
+        // this line makes the hour and the minutes of the date for the last generated post in sitemap to 00:00. if the cronjob is working well or not
+        $lastPostIdsForEachLanguage = [];
+        $tmpPosts = get_posts([
+            'numberposts' => 100,
+            'post_type' => 'contenthub_composite',
+            'offset' => 0,
+            'post_status' => 'publish',
+            'orderby' => 'post_modified',
+            'order' => 'DESC'
+        ]); 
+        $allLangs = [];
+        foreach ($tmpPosts as $tmpPost) {
+            if(! in_array(pll_get_post_language($tmpPost->ID), $allLangs)){
+                $allLangs[] = pll_get_post_language($tmpPost->ID);
+            }
+        } 
+        foreach ($tmpPosts as $tmpPost) { 
+            if(in_array(pll_get_post_language($tmpPost->ID), $allLangs)){
+                $key = array_search(pll_get_post_language($tmpPost->ID), $allLangs);
+                unset($allLangs[$key]);
+                $lastPostIdsForEachLanguage[] = $tmpPost->ID;
+            }
+        }
+        // end </code for test if cronjob is working well
+
+
         foreach ($postTypes as $postType) {
             $postCount = wp_count_posts($postType)->publish;
             $postProgress = make_progress_bar(sprintf('Generating %s sitemap entries for %s...', number_format($postCount), $postType), $postCount);
@@ -40,11 +70,18 @@ class GenerateCommand extends \WP_CLI_Command
                 'post_type' => $postType,
                 'offset' => $postOffset,
                 'post_status' => 'publish',
-                'orderby' => 'ID',
+                'orderby' => 'post_modified',
                 'order' => 'ASC'
             ])) {
                 foreach ($posts as $post) {
                     if (apply_filters(WpBonnierSitemap::FILTER_POST_ALLOWED_IN_SITEMAP, true, $post)) {
+
+                        // start <code for test if cronjob is working well(we can delete these codes when ever we want)
+                        if(in_array($post->ID, $lastPostIdsForEachLanguage)){
+                            $post->post_modified[11] = $post->post_modified[12] = $post->post_modified[14] = $post->post_modified[15] = 0;
+                        }
+                        // end </code for test if cronjob is working well
+
                         WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdatePost($post);
                     } else {
                         WpBonnierSitemap::instance()->getSitemapRepository()->deleteByPost($post);
