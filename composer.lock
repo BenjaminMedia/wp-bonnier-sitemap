@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7a8270ffca8433abb5b0d9e9f90c56e",
+    "content-hash": "1bf516eeb1b82bf460e0d1dff7fa33a1",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -180,12 +180,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
                 "files": [
                     "helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Illuminate\\Support\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5628,12 +5628,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "cache-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5680,12 +5680,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "checksum-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5742,12 +5742,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "config-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5807,12 +5807,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "core-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5866,12 +5866,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "cron-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5932,12 +5932,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "db-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5990,12 +5990,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "WP_CLI\\Embeds\\": "src/"
-                },
                 "files": [
                     "embed-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "WP_CLI\\Embeds\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6188,13 +6188,13 @@
                 ]
             },
             "autoload": {
+                "files": [
+                    "entity-command.php"
+                ],
                 "psr-4": {
                     "": "src/",
                     "WP_CLI\\": "src/WP_CLI"
-                },
-                "files": [
-                    "entity-command.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6243,12 +6243,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "eval-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6297,12 +6297,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "export-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6379,12 +6379,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "extension-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6432,12 +6432,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "import-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6489,12 +6489,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "language-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6543,12 +6543,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "media-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6592,12 +6592,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Mustangostang\\": "src/"
-                },
                 "files": [
                     "includes/functions.php"
-                ]
+                ],
+                "psr-4": {
+                    "Mustangostang\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6650,12 +6650,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "package-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6754,12 +6754,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "rewrite-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6814,12 +6814,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "role-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6873,12 +6873,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "scaffold-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6924,12 +6924,12 @@
                 ]
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "search-replace-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -6977,12 +6977,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "server-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -7030,13 +7030,13 @@
                 "bundled": true
             },
             "autoload": {
+                "files": [
+                    "shell-command.php"
+                ],
                 "psr-4": {
                     "": "src/",
                     "WP_CLI\\": "src/WP_CLI"
-                },
-                "files": [
-                    "shell-command.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -7085,12 +7085,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "super-admin-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -7145,12 +7145,12 @@
                 "bundled": true
             },
             "autoload": {
-                "psr-4": {
-                    "": "src/"
-                },
                 "files": [
                     "widget-command.php"
-                ]
+                ],
+                "psr-4": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
