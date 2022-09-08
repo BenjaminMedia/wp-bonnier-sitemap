@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Bonnier Sitemap
- * Version: 1.6.4
+ * Version: 1.6.5
  * Plugin URI: https://github.com/BenjaminMedia/wp-bonnier-sitemap
  * Description: This plugin creates sitemaps with support for Polylang
  * Author: Bonnier Publications
