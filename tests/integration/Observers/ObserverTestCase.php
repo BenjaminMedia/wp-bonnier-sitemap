@@ -11,9 +11,9 @@ class ObserverTestCase extends TestCase
 {
     protected $sitemapRepository;
 
-    public function setUp()
+    public function _setUp()
     {
-        parent::setUp();
+        parent::_setUp();
 
         try {
             $this->sitemapRepository = new SitemapRepository(new DB);
