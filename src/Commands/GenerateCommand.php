@@ -140,9 +140,10 @@ class GenerateCommand extends \WP_CLI_Command
         $authorsCount = count($authors);
         $authorsProgress = make_progress_bar(sprintf('Generating %s sitemap entries for authors...', number_format($authorsCount)), $authorsCount);
         foreach ($authors as $author) {
+            $hasAdminRole = in_array('administrator', $author->roles);
             $hasAuthorRole = in_array('author', $author->roles);
             $hasEditorRole = in_array('editor', $author->roles);
-            if ($hasAuthorRole || $hasEditorRole) {
+            if ($hasAuthorRole || $hasEditorRole || $hasAdminRole) {
                 $allowInSitemap = apply_filters(WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP, true, $author->ID, $author);
                 foreach (LocaleHelper::getLanguages() as $locale) {
                     $countUserPosts = Utils::countUserPosts($author, $locale);
