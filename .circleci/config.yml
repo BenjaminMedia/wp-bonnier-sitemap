@@ -9,7 +9,7 @@ jobs:
           - DB_PASSWORD=secret
           - DB_NAME=wp_test
           - DB_HOST=192.168.56.56
-      - image: circleci/mysql:5.7.18
+      - image: circleci/mysql
         environment:
           - MYSQL_ROOT_PASSWORD=secret
           - MYSQL_DATABASE=wp_test
