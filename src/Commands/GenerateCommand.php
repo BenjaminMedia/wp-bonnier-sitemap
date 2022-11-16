@@ -140,16 +140,13 @@ class GenerateCommand extends \WP_CLI_Command
         $authorsCount = count($authors);
         $authorsProgress = make_progress_bar(sprintf('Generating %s sitemap entries for authors...', number_format($authorsCount)), $authorsCount);
         foreach ($authors as $author) {
-            $hasAuthorRole = in_array('author', $author->roles);
-            if ($hasAuthorRole) {
-                $allowInSitemap = apply_filters(WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP, true, $author->ID, $author);
-                foreach (LocaleHelper::getLanguages() as $locale) {
-                    $countUserPosts = Utils::countUserPosts($author, $locale);
-                    if ($allowInSitemap && $countUserPosts >= $minAuthorPosts) {
-                        WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateUser($author, $locale);
-                    } else {
-                        WpBonnierSitemap::instance()->getSitemapRepository()->deleteByUser($author, $locale);
-                    }
+            $allowInSitemap = apply_filters(WpBonnierSitemap::FILTER_ALLOW_USER_IN_SITEMAP, true, $author->ID, $author);
+            foreach (LocaleHelper::getLanguages() as $locale) {
+                $countUserPosts = Utils::countUserPosts($author, $locale);
+                if ($allowInSitemap && $countUserPosts >= $minAuthorPosts) {
+                    WpBonnierSitemap::instance()->getSitemapRepository()->insertOrUpdateUser($author, $locale);
+                } else {
+                    WpBonnierSitemap::instance()->getSitemapRepository()->deleteByUser($author, $locale);
                 }
             }
             $authorsProgress->tick();
